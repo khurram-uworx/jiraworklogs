@@ -44,5 +44,7 @@ internal class JiraDbContext : DbContext
         {
             entity.HasIndex(e => e.WorklogJiraId).IsUnique();
         });
+
+        base.OnModelCreating(modelBuilder);
     }
 }
