@@ -39,12 +39,10 @@ services:
     build:
       dockerfile: ./JiraWorkLogsService/Dockerfile
     restart: unless-stopped
-    # environment:
-    #   # - DOTNET_ENVIRONMENT=Development
-    #   - RABBITMQ_HOSTNAME=rabbitmq
-    #   - RABBITMQ_DEFAULT_USER=guest
-    #   - RABBITMQ_DEFAULT_PASS=guest
-    #   - ZIPKIN_HOSTNAME=zipkin
+    environment:
+      - JIRA_URL=${JIRAURL}
+      - JIRA_USER=${JIRAUSER}
+      - JIRA_TOKEN=${JIRATOKEN}
     depends_on:
       - zipkin
       - rabbitmq
