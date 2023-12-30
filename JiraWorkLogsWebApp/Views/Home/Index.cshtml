@@ -2,7 +2,58 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="pagination-container">
+    <div data-page="1">
+        @Html.Raw(ViewBag.Page1)
+    </div>
+    <div data-page="2" style="display:none;">
+        @Html.Raw(ViewBag.Page2)
+    </div>
+    <div data-page="3" style="display:none;">
+        @Html.Raw(ViewBag.Page3)
+    </div>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item" data-page="1"><a class="page-link" href="#">1</a></li>
+            <li class="page-item" data-page="2"><a class="page-link" href="#">2</a></li>
+            <li class="page-item" data-page="3"><a class="page-link" href="#">3</a></li>
+        </ul>
+    </nav>
 </div>
+
+Last updated: @ViewBag.LastUpdateTime
+
+@section Scripts {
+    <script>
+        var paginationHandler = function () {
+            // store pagination container so we only select it once
+            var $paginationContainer = $(".pagination-container"),
+                $pagination = $paginationContainer.find('.pagination');
+            // click event
+            $pagination.find("li a").on('click.pageChange', function (e) {
+                e.preventDefault();
+                // get parent li's data-page attribute and current page
+                var parentLiPage = $(this).parent('li').data("page"),
+                    currentPage = parseInt($(".pagination-container div[data-page]:visible").data('page')),
+                    numPages = $paginationContainer.find("div[data-page]").length;
+                // make sure they aren't clicking the current page
+                if (parseInt(parentLiPage) !== parseInt(currentPage)) {
+                    // hide the current page
+                    $paginationContainer.find("div[data-page]:visible").hide();
+                    if (parentLiPage === '+') {
+                        // next page
+                        $paginationContainer.find("div[data-page=" + (currentPage + 1 > numPages ? numPages : currentPage + 1) + "]").show();
+                    } else if (parentLiPage === '-') {
+                        // previous page
+                        $paginationContainer.find("div[data-page=" + (currentPage - 1 < 1 ? 1 : currentPage - 1) + "]").show();
+                    } else {
+                        // specific page
+                        $paginationContainer.find("div[data-page=" + parseInt(parentLiPage) + "]").show();
+                    }
+                }
+            });
+        };
+        $(document).ready(paginationHandler);
+    </script>
+}
