@@ -24,6 +24,7 @@ public static class RabbitMqHelper
             Password = Constants.RabbitMqPassword,
             Port = 5672,
             RequestedConnectionTimeout = TimeSpan.FromMilliseconds(3000),
+            ClientProvidedName = Environment.MachineName
         };
     }
 

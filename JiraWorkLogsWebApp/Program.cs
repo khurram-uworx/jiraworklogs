@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 using Utils;
 using Utils.Cache;
+using Utils.Messaging;
 
 namespace JiraWorkLogsWebApp
 {
@@ -16,6 +17,7 @@ namespace JiraWorkLogsWebApp
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            builder.Services.AddSingleton<MessageSender>();
             builder.Services.AddSingleton<Task<RedisConnection>>(x =>
                 RedisConnection.InitializeAsync(Constants.RedisConnectionString));
 
