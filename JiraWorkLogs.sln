@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2BD4FEDB-D6CD-439C-B4CB-407664152AAC}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yaml = docker-compose.yaml
+		nginx.conf = nginx.conf
 		README.md = README.md
 		sample.env = sample.env
 	EndProjectSection
@@ -15,6 +16,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JiraWorkLogsService", "JiraWorkLogsService\JiraWorkLogsService.csproj", "{7BF50331-6968-4615-A2D3-9F87BA67C8D1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils", "Utils\Utils.csproj", "{E26B2D15-7FBB-412F-B523-631C69F4A36D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAuth", "BAuth\BAuth.csproj", "{10FAB54A-5AEB-43FA-8404-1B92EE1D8B79}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +37,10 @@ Global
 		{E26B2D15-7FBB-412F-B523-631C69F4A36D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E26B2D15-7FBB-412F-B523-631C69F4A36D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E26B2D15-7FBB-412F-B523-631C69F4A36D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10FAB54A-5AEB-43FA-8404-1B92EE1D8B79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10FAB54A-5AEB-43FA-8404-1B92EE1D8B79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10FAB54A-5AEB-43FA-8404-1B92EE1D8B79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10FAB54A-5AEB-43FA-8404-1B92EE1D8B79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
