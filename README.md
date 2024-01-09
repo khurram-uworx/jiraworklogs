@@ -2,8 +2,8 @@
 
 - Create .env file using sample.env
 - docker compose up -d
-- http://localhost:8080 should show web app
-- http://localhost:15672 for rabbitmq; default login/password is guest/guest
-- http://localhost:9411 for zipkin
+- Add HOSTS entry for jiralogs and zipkin pointing to your Docker Server / Localhost
+- http://jiralogs should show web app; use khurram as username and uworx as password
+- http://zipkin for zipkin; use khurram as username and uworx as password
 
 ![image](https://github.com/khurram-uworx/jiraworklogs/assets/121337505/c07c34e9-29ee-4f74-a3db-ca19bb5f7108)
