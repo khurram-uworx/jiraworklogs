@@ -12,6 +12,8 @@ using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using Utils.Data;
+using Utils.Helpers;
 
 namespace Utils.Messaging;
 
@@ -60,6 +62,33 @@ public class MessageReceiver : IDisposable
             this.logger.LogInformation($"Message received: [{message}]");
 
             activity?.SetTag("message", message);
+
+            var jiraUrl = Constants.JiraUrl;
+            if (!string.IsNullOrWhiteSpace(jiraUrl) && jiraUrl != "https://YOUR-COMPANY.atlassian.net")
+            {
+                try
+                {
+                    var jql = "Project = AppM AND worklogDate >= '2023-12-1' AND worklogDate < '2024-1-1'";
+                    var j = new JiraHelper(Constants.JiraUrl, Constants.JiraUser, Constants.JiraToken);
+                    j.ListIssuesAsync(jql).Wait();
+                    activity.AddEvent(new ActivityEvent("Jira Queured"));
+
+                    try
+                    {
+                        var summarizer = new Summarizer();
+                        int r = summarizer.ProcessAsync().Result;
+                        activity.AddEvent(new ActivityEvent("Cache updated"));
+                    }
+                    catch (Exception ex)
+                    {
+                        this.logger.LogError(ex, "Failed to update cache");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.logger.LogError(ex, "Failed to query Jira {url}", jiraUrl);
+                }
+            }
 
             // The OpenTelemetry messaging specification defines a number of attributes. These attributes are added here.
             RabbitMqHelper.AddMessagingTags(activity);

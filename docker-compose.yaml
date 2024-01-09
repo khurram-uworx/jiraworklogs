@@ -1,52 +1,49 @@
-version: '3.4'
+version: '3.5'
+
+volumes:
+  database:
 
 services:
   zipkin:
-    image: openzipkin/zipkin
     container_name: zipkin
+    image: openzipkin/zipkin
     ports:
       - 9411:9411
 
   redis:
-    image: redis
     container_name: redis
+    image: redis
     # ports:
-    #   - "6379:6379"
+    #   - 6379:6379
 
-  rabbitmq: # login guest:guest
+  rabbitmq: # login:password guest:guest
     container_name: rabbitmq
     image: rabbitmq:3-management-alpine
-    hostname: "rabbitmq"
-    labels:
-      NAME: "rabbitmq"
-    ports:
-    # - "4369:4369"
-    # - "5671:5671"
-    # - "5672:5672"
-    # - "25672:25672"
-    # - "15671:15671"
-    - "15672:15672"
+    ports: # 4369, 5671, 5672, 25672, 15671
+    - 15672:15672
 
   postgres:
     container_name: postgres
     image: postgres
+    volumes:
+      - ./database:/var/lib/postgresql
     environment:
-      # change this for a "real" app!
       POSTGRES_PASSWORD: password
+    ports:
+      - 5432:5432
 
   service:
     container_name: service
     build:
       dockerfile: ./JiraWorkLogsService/Dockerfile
     restart: unless-stopped
-    # environment:
-    #   # - DOTNET_ENVIRONMENT=Development
-    #   - RABBITMQ_HOSTNAME=rabbitmq
-    #   - RABBITMQ_DEFAULT_USER=guest
-    #   - RABBITMQ_DEFAULT_PASS=guest
-    #   - ZIPKIN_HOSTNAME=zipkin
+    environment:
+      - JIRA_URL=${JIRAURL}
+      - JIRA_USER=${JIRAUSER}
+      - JIRA_TOKEN=${JIRATOKEN}
     depends_on:
       - zipkin
+      - redis
       - rabbitmq
       - postgres
 
@@ -55,9 +52,9 @@ services:
     build:
       dockerfile: ./JiraWorkLogsWebApp/Dockerfile
     restart: unless-stopped
-    ports:
+    ports: # 8081
       - 8080:8080
-      - 8081:8081
     depends_on:
       - zipkin
+      - redis
       - rabbitmq

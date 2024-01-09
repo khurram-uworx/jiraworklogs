@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Utils
 {
@@ -18,18 +14,6 @@ namespace Utils
             }
         }
 
-        public static string RabbitMqHost { get => "rabbitmq"; }
-        public static string RabbitMqUser { get => "guest"; }
-        public static string RabbitMqPassword { get => "guest"; }
-
-        public static string DatabaseConnectionString
-        {
-            get
-            {
-                return "Server=postgresql;UserId=postgres;Password=password;Database=jiraworklogs;";
-            }
-        }
-
         public static string RedisConnectionString
         {
             get
@@ -37,5 +21,25 @@ namespace Utils
                 return "redis:6379,abortConnect=false";
             }
         }
+
+        internal static string RabbitMqHost { get => "rabbitmq"; }
+
+        internal static string RabbitMqUser { get => "guest"; }
+
+        internal static string RabbitMqPassword { get => "guest"; }
+
+        internal static string DatabaseConnectionString
+        {
+            get
+            {
+                return "Server=postgres;UserId=postgres;Password=password;Database=jiraworklogs;";
+            }
+        }
+
+        internal static string JiraUrl { get => Environment.GetEnvironmentVariable("JIRA_URL"); }
+
+        internal static string JiraUser { get => Environment.GetEnvironmentVariable("JIRA_USER"); }
+
+        internal static string JiraToken { get => Environment.GetEnvironmentVariable("JIRA_TOKEN"); }
     }
 }
