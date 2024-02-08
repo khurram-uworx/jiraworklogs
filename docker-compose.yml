@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  jiraworklogsservice:
+    image: ${DOCKER_REGISTRY-}jiraworklogsservice
+    build:
+      context: .
+      dockerfile: JiraWorkLogsService/Dockerfile
+
+  jiraworklogswebapp:
+    image: ${DOCKER_REGISTRY-}jiraworklogswebapp
+    build:
+      context: .
+      dockerfile: JiraWorkLogsWebApp/Dockerfile
+
