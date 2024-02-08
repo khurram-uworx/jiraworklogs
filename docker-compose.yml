@@ -1,6 +1,12 @@
 version: '3.4'
 
 services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: uworx
+
   jiraworklogsservice:
     image: ${DOCKER_REGISTRY-}jiraworklogsservice
     build:
