@@ -19,5 +19,14 @@
                 return $"Server={postgresHostName};Database=postgres;UserName=postgres;Password=password;";
             }
         }
+
+        public static string RedisConnectionString
+        {
+            get
+            {
+                var redisHostName = Environment.GetEnvironmentVariable("REDIS_HOSTNAME") ?? "redis";
+                return $"{redisHostName}:6379,abortConnect=false";
+            }
+        }
     }
 }

@@ -13,6 +13,10 @@ services:
     environment:
       POSTGRES_PASSWORD: uworx
 
+  redis:
+    container_name: redis
+    image: redis
+
   jiraworklogsservice:
     image: ${DOCKER_REGISTRY-}jiraworklogsservice
     build:
@@ -24,4 +28,3 @@ services:
     build:
       context: .
       dockerfile: JiraWorkLogsWebApp/Dockerfile
-

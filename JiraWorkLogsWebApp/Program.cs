@@ -50,6 +50,9 @@ namespace JiraWorkLogsWebApp
             // for otlp
             //tracing.AddOtlpExporter(otlpOptions => otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint));
 
+            builder.Services.AddSingleton<Task<RedisConnection>>(x =>
+                RedisConnection.InitializeAsync(Constants.RedisConnectionString));
+
             var app = builder.Build();
             app.UseOpenTelemetryPrometheusScrapingEndpoint();
 
