@@ -5,11 +5,16 @@ VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JiraWorkLogsWebApp", "JiraWorkLogsWebApp\JiraWorkLogsWebApp.csproj", "{37181445-E357-43E1-812A-1D57B13D1063}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JiraWorkLogsService", "JiraWorkLogsService\JiraWorkLogsService.csproj", "{517814D1-CCE3-43F7-854A-4289CA14239B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JiraWorkLogsService", "JiraWorkLogsService\JiraWorkLogsService.csproj", "{517814D1-CCE3-43F7-854A-4289CA14239B}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{9F088CAB-4ECE-4802-9D78-F61EBB52A794}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{7BBB3B40-9F15-4D6B-8048-D706A7888E24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils", "Utils\Utils.csproj", "{7BBB3B40-9F15-4D6B-8048-D706A7888E24}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0AF0F483-46E0-4DD1-89F0-E61D49E1809C}"
+	ProjectSection(SolutionItems) = preProject
+		sample.env = sample.env
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

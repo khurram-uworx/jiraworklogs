@@ -16,6 +16,11 @@ using Utils.Helpers;
 
 namespace Utils;
 
+public class ActivityEventArgs : EventArgs
+{
+    public Activity MessageActivity { get; set; }
+}
+
 public class MessageReceiver : IDisposable
 {
     private static readonly ActivitySource ActivitySource = new(nameof(MessageReceiver));
@@ -24,6 +29,8 @@ public class MessageReceiver : IDisposable
     private readonly ILogger<MessageReceiver> logger;
     private readonly IConnection connection;
     private readonly IModel channel;
+
+    public event EventHandler<ActivityEventArgs> OnMessageReceived;
 
     public MessageReceiver(ILogger<MessageReceiver> logger)
     {
@@ -65,8 +72,8 @@ public class MessageReceiver : IDisposable
             // The OpenTelemetry messaging specification defines a number of attributes. These attributes are added here.
             RabbitMqHelper.AddMessagingTags(activity);
 
-            // Simulate some work
-            Thread.Sleep(1000);
+            if (null != this.OnMessageReceived)
+                this.OnMessageReceived(this, new ActivityEventArgs { MessageActivity = activity }); ;
         }
         catch (Exception ex)
         {
