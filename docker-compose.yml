@@ -31,6 +31,7 @@ services:
       - ./database:/var/lib/postgresql
 
   service:
+    container_name: service
     image: ${DOCKER_REGISTRY-}service
     build:
       context: .
@@ -47,6 +48,7 @@ services:
       - postgres
 
   webapp:
+    container_name: webapp
     image: ${DOCKER_REGISTRY-}webapp
     build:
       context: .
@@ -60,15 +62,17 @@ services:
 
   bauth:
     container_name: bauth
+    image: ${DOCKER_REGISTRY-}bauth
     build:
-      context: BAuth/
+      context: .
+      dockerfile: BAuth/Dockerfile
     restart: unless-stopped
     environment:
       - TZ=Asia/Karachi
 
   nginx:
-    image: nginx
     container_name: nginx
+    image: nginx
     restart: unless-stopped
     depends_on:
       - bauth
@@ -76,4 +80,4 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
-      - 80:80
+      - 80:9000
