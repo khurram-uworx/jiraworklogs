@@ -5,7 +5,7 @@
       "commandVersion": "1.0",
       "serviceActions": {
         "jiraworklogsservice": "StartDebugging",
-        "jiraworklogswebapp": "StartDebugging"
+        "webapp": "StartDebugging"
       }
     }
   }

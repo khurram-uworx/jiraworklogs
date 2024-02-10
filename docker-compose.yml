@@ -7,8 +7,8 @@ services:
   zipkin:
     image: openzipkin/zipkin
     container_name: zipkin
-    ports:
-      - 9411:9411
+    # ports:
+    #   - 9411:9411
 
   redis:
     container_name: redis
@@ -19,23 +19,25 @@ services:
   rabbitmq: # login:password guest:guest
     container_name: rabbitmq
     image: rabbitmq:3-management-alpine
-    ports: # 4369, 5671, 5672, 25672, 15671
-    - 15672:15672
+    # ports: # 4369, 5671, 5672, 25672, 15671
+    # - 15672:15672
 
   postgres:
     container_name: postgres
     image: postgres
     environment:
-      POSTGRES_PASSWORD: uworx
+      - POSTGRES_PASSWORD=uworx
     volumes:
       - ./database:/var/lib/postgresql
 
-  jiraworklogsservice:
-    image: ${DOCKER_REGISTRY-}jiraworklogsservice
+  service:
+    container_name: service
+    image: ${DOCKER_REGISTRY-}service
     build:
       context: .
       dockerfile: JiraWorkLogsService/Dockerfile
     environment:
+      - TZ=Asia/Karachi
       - JIRA_URL=${JIRAURL}
       - JIRA_USER=${JIRAUSER}
       - JIRA_TOKEN=${JIRATOKEN}
@@ -45,12 +47,37 @@ services:
       - rabbitmq
       - postgres
 
-  jiraworklogswebapp:
-    image: ${DOCKER_REGISTRY-}jiraworklogswebapp
+  webapp:
+    container_name: webapp
+    image: ${DOCKER_REGISTRY-}webapp
     build:
       context: .
       dockerfile: JiraWorkLogsWebApp/Dockerfile
+    environment:
+      - TZ=Asia/Karachi
     depends_on:
       - zipkin
       - redis
       - rabbitmq
+
+  bauth:
+    container_name: bauth
+    image: ${DOCKER_REGISTRY-}bauth
+    build:
+      context: .
+      dockerfile: BAuth/Dockerfile
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Karachi
+
+  nginx:
+    container_name: nginx
+    image: nginx
+    restart: unless-stopped
+    depends_on:
+      - bauth
+      - webapp
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80

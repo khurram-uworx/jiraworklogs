@@ -7,7 +7,7 @@
     <ProjectGuid>9f088cab-4ece-4802-9d78-f61ebb52a794</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
-    <DockerServiceName>jiraworklogswebapp</DockerServiceName>
+    <DockerServiceName>webapp</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">
