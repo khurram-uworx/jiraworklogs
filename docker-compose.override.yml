@@ -1,6 +1,6 @@
 version: '3.5'
 
-services:
+# services:
 #   service:
 #     environment:
 #       - DOTNET_ENVIRONMENT=Development
@@ -17,6 +17,6 @@ services:
 #     volumes:
 #       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
 #       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-  nginx:
-    ports:
-      - 80:9000
+#   nginx:
+#     ports:
+#       - 80:9000

@@ -26,6 +26,7 @@ namespace BAuth
             }, "uworx-realm", 3000);
 
             app.MapGet("/", () => "Hello World!");
+            app.MapGet("/auth", () => "Hello World!");
 
             app.Run();
         }
