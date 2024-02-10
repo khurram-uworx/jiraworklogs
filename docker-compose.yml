@@ -1,6 +1,12 @@
 version: '3.4'
 
 services:
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - 9411:9411
+
   postgres:
     container_name: postgres
     image: postgres
