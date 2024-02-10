@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using System;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using Utils;
@@ -16,6 +17,8 @@ namespace JiraWorkLogsService
 
         public static void Main(string[] args)
         {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
             var builder = Host.CreateApplicationBuilder(args);
             builder.Services.AddHostedService<Worker>();
 

@@ -1,5 +1,8 @@
 version: '3.5'
 
+volumes:
+  database:
+
 services:
   zipkin:
     image: openzipkin/zipkin
@@ -24,12 +27,18 @@ services:
     image: postgres
     environment:
       POSTGRES_PASSWORD: uworx
+    volumes:
+      - ./database:/var/lib/postgresql
 
   jiraworklogsservice:
     image: ${DOCKER_REGISTRY-}jiraworklogsservice
     build:
       context: .
       dockerfile: JiraWorkLogsService/Dockerfile
+    environment:
+      - JIRA_URL=${JIRAURL}
+      - JIRA_USER=${JIRAUSER}
+      - JIRA_TOKEN=${JIRATOKEN}
     depends_on:
       - zipkin
       - redis

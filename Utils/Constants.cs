@@ -18,7 +18,7 @@ namespace Utils
             get
             {
                 var postgresHostName = Environment.GetEnvironmentVariable("POSTGRES_HOSTNAME") ?? "postgres";
-                return $"Server={postgresHostName};Database=postgres;UserName=postgres;Password=password;";
+                return $"Server={postgresHostName};Database=postgres;UserName=postgres;Password=uworx;";
             }
         }
 
@@ -36,5 +36,11 @@ namespace Utils
         internal static string RabbitMqUser { get => "guest"; }
 
         internal static string RabbitMqPassword { get => "guest"; }
+
+        public static string JiraUrl { get => Environment.GetEnvironmentVariable("JIRA_URL") ?? ""; }
+
+        public static string JiraUser { get => Environment.GetEnvironmentVariable("JIRA_USER") ?? ""; }
+
+        public static string JiraToken { get => Environment.GetEnvironmentVariable("JIRA_TOKEN") ?? ""; }
     }
 }
