@@ -1,4 +1,6 @@
-﻿namespace Utils
+﻿using System;
+
+namespace Utils
 {
     public static class Constants
     {
@@ -28,5 +30,11 @@
                 return $"{redisHostName}:6379,abortConnect=false";
             }
         }
+
+        internal static string RabbitMqHost { get => "rabbitmq"; }
+
+        internal static string RabbitMqUser { get => "guest"; }
+
+        internal static string RabbitMqPassword { get => "guest"; }
     }
 }

@@ -1,6 +1,5 @@
 using JiraWorkLogsWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Diagnostics;
 using Utils;
 
@@ -10,12 +9,15 @@ namespace JiraWorkLogsWebApp.Controllers
     {
         private readonly ILogger<HomeController> logger;
         private readonly Task<RedisConnection> redisConnectionFactory;
+        private readonly MessageSender messageSender;
 
         public HomeController(ILogger<HomeController> logger,
-            Task<RedisConnection> redisConnectionFactory)
+            Task<RedisConnection> redisConnectionFactory,
+            MessageSender messageSender)
         {
             this.logger = logger;
             this.redisConnectionFactory = redisConnectionFactory;
+            this.messageSender = messageSender;
         }
 
         public async Task<IActionResult> Index()
@@ -60,6 +62,13 @@ namespace JiraWorkLogsWebApp.Controllers
             await redisConnection.BasicRetryAsync(async db => await db.StringSetAsync("page2", "<ul><li>Hello<li>Azure</ul>"));
             await redisConnection.BasicRetryAsync(async db => await db.StringSetAsync("page3", "<ul><li>Hello<li>Redis</ul>"));
 
+            return View();
+        }
+
+        public ActionResult Rabbit()
+        {
+            this.messageSender.SendMessage();
+            this.ViewBag.Message = "RabbitMQ message is sent";
             return View();
         }
 
