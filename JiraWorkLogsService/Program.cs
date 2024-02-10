@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -32,6 +34,8 @@ namespace JiraWorkLogsService
                 .AddConsoleExporter());
             // for otlp
             //tracing.AddOtlpExporter(otlpOptions => otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint));
+
+            builder.Services.AddSingleton<MessageReceiver>();
 
             var host = builder.Build();
             host.Run();

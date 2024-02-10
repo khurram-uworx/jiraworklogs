@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.5'
 
 services:
   zipkin:
@@ -7,24 +7,41 @@ services:
     ports:
       - 9411:9411
 
+  redis:
+    container_name: redis
+    image: redis
+    # ports:
+    #   - 6379:6379
+
+  rabbitmq: # login:password guest:guest
+    container_name: rabbitmq
+    image: rabbitmq:3-management-alpine
+    ports: # 4369, 5671, 5672, 25672, 15671
+    - 15672:15672
+
   postgres:
     container_name: postgres
     image: postgres
     environment:
       POSTGRES_PASSWORD: uworx
 
-  redis:
-    container_name: redis
-    image: redis
-
   jiraworklogsservice:
     image: ${DOCKER_REGISTRY-}jiraworklogsservice
     build:
       context: .
       dockerfile: JiraWorkLogsService/Dockerfile
+    depends_on:
+      - zipkin
+      - redis
+      - rabbitmq
+      - postgres
 
   jiraworklogswebapp:
     image: ${DOCKER_REGISTRY-}jiraworklogswebapp
     build:
       context: .
       dockerfile: JiraWorkLogsWebApp/Dockerfile
+    depends_on:
+      - zipkin
+      - redis
+      - rabbitmq
