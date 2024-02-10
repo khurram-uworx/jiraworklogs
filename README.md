@@ -4,7 +4,10 @@
 
 - Create .env file using sample.env
 - docker compose up -d
-- http://jiralogs should show web app; add needed hosts entry
+
+Add needed hosts entry; use khurram as login and uworx as password when nginx prompts for basic authentication
+
+- http://jiralogs should show web app; 
 - http://zipkin for zipkin
 
 # Git
