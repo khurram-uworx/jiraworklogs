@@ -5,10 +5,11 @@
 - Create .env file using sample.env
 - docker compose up -d
 
-Add needed hosts entry; use khurram as login and uworx as password when nginx prompts for basic authentication
+Use khurram as login and uworx as password when nginx prompts for basic authentication
 
-- http://jiralogs should show web app; 
-- http://zipkin for zipkin
+- http://docker-host should show web app
+- http://docker-host/zipkin for zipkin
+- http://docker-host:90 for RabbitMQ
 
 # Git
 
