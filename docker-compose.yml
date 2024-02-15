@@ -41,6 +41,7 @@ services:
       - JIRA_URL=${JIRAURL}
       - JIRA_USER=${JIRAUSER}
       - JIRA_TOKEN=${JIRATOKEN}
+      - JIRA_JQL=${JIRAJQL}
     depends_on:
       - zipkin
       - redis

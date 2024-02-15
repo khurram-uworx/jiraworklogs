@@ -11,7 +11,6 @@ namespace JiraWorkLogsService
 {
     public class Worker : BackgroundService
     {
-        private readonly string jql = "Project = AppM AND worklogDate >= '2024-1-1' AND worklogDate < '2024-2-1'";
         private readonly string[] emails = new[] {
             "abdul.hai@juriba.com", "abdulraffay.saeed@juriba.com", "arslan.ahmad@juriba.com", "azeem.khan@juriba.com", "hamza.mehmood@juriba.com",
             "khurram.aziz@juriba.com", "mohammed.butt@juriba.com", "samia.saleem@juriba.com", "sana.fatehkhan@juriba.com", "tahreem.ahmad@juriba.com"
@@ -25,10 +24,10 @@ namespace JiraWorkLogsService
         {
             this.logger = logger;
             this.messageReceiver = messageReceiver;
-            this.messageReceiver.OnMessageReceived += MessageReceived;
+            this.messageReceiver.OnMessageReceived += messageReceived;
         }
 
-        private void MessageReceived(object? sender, ActivityEventArgs e)
+        void messageReceived(object? sender, ActivityEventArgs e)
         {
             if (logger.IsEnabled(LogLevel.Information))
                 this.logger.LogInformation("Incrementing greeting at: {time}", DateTimeOffset.Now);
@@ -41,6 +40,9 @@ namespace JiraWorkLogsService
             {
                 try
                 {
+                    var jql = ServiceConstants.Jql;
+                    if (string.IsNullOrEmpty(jql)) ArgumentException.ThrowIfNullOrEmpty("jql");
+                    
                     var j = new JiraHelper(Constants.JiraUrl, Constants.JiraUser, Constants.JiraToken);
                     j.ListIssuesAsync(jql).Wait();
                     e.MessageActivity?.AddEvent(new ActivityEvent("Jira Queuried"));
