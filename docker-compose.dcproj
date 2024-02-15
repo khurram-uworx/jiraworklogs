@@ -6,7 +6,8 @@
     <DockerPublishLocally>False</DockerPublishLocally>
     <ProjectGuid>9f088cab-4ece-4802-9d78-f61ebb52a794</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
-    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
+    <!--<DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>-->
+    <DockerServiceUrl>http://localhost:9000</DockerServiceUrl>
     <DockerServiceName>webapp</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
