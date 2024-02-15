@@ -47,6 +47,8 @@ services:
       - redis
       - rabbitmq
       - postgres
+    volumes:
+      - ./emails.txt:/data/emails.txt
 
   webapp:
     container_name: webapp

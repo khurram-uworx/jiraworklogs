@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace JiraWorkLogsService
 {
@@ -20,6 +22,27 @@ namespace JiraWorkLogsService
                 }
 
                 return jql;
+            }
+        }
+
+        public static string[] Emails
+        {
+            get
+            {
+                var emails = new List<string>();
+
+                try
+                {
+                    string data = File.ReadAllText("/data/emails.txt");
+                    foreach(var line in data.Split(Environment.NewLine.ToCharArray()))
+                    {
+                        if (line.Contains("@"))
+                            emails.Add(line.Trim());
+                    }
+                }
+                catch { }
+
+                return emails.ToArray();
             }
         }
     }

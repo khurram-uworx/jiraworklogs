@@ -11,11 +11,6 @@ namespace JiraWorkLogsService
 {
     public class Worker : BackgroundService
     {
-        private readonly string[] emails = new[] {
-            "abdul.hai@juriba.com", "abdulraffay.saeed@juriba.com", "arslan.ahmad@juriba.com", "azeem.khan@juriba.com", "hamza.mehmood@juriba.com",
-            "khurram.aziz@juriba.com", "mohammed.butt@juriba.com", "samia.saleem@juriba.com", "sana.fatehkhan@juriba.com", "tahreem.ahmad@juriba.com"
-        };
-
         private readonly ILogger<Worker> logger;
         private readonly MessageReceiver messageReceiver;
 
@@ -50,7 +45,7 @@ namespace JiraWorkLogsService
                     try
                     {
                         var summarizer = new Summarizer();
-                        int r = summarizer.ProcessAsync(emails).Result;
+                        int r = summarizer.ProcessAsync(ServiceConstants.Emails).Result;
                         e.MessageActivity?.AddEvent(new ActivityEvent("Cache updated"));
                     }
                     catch (Exception ex)
