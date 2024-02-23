@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Utils;
+namespace UWorx.JiraWorkLogs.Redis;
 
 public class RedisConnection : IDisposable
 {

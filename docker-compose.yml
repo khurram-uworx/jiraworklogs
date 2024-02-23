@@ -7,24 +7,28 @@ services:
   zipkin:
     image: openzipkin/zipkin
     container_name: zipkin
+    restart: unless-stopped
     # ports:
     #   - 9411:9411
 
   redis:
     container_name: redis
     image: redis
+    restart: unless-stopped
     # ports:
     #   - 6379:6379
 
   rabbitmq: # login:password guest:guest
     container_name: rabbitmq
     image: rabbitmq:3-management-alpine
+    restart: unless-stopped
     # ports: # 4369, 5671, 5672, 25672, 15671
     # - 15672:15672
 
   postgres:
     container_name: postgres
     image: postgres
+    restart: unless-stopped
     environment:
       - POSTGRES_PASSWORD=uworx
     volumes:
@@ -36,6 +40,7 @@ services:
     build:
       context: .
       dockerfile: JiraWorkLogsService/Dockerfile
+    restart: unless-stopped
     environment:
       - TZ=Asia/Karachi
       - JIRA_URL=${JIRAURL}
@@ -56,6 +61,7 @@ services:
     build:
       context: .
       dockerfile: JiraWorkLogsWebApp/Dockerfile
+    restart: unless-stopped
     environment:
       - TZ=Asia/Karachi
     depends_on:

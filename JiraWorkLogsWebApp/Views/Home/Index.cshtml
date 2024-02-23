@@ -1,29 +1,38 @@
-﻿@{
+﻿@model IndexViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="pagination-container">
-    <div data-page="1">
-        @Html.Raw(ViewBag.Page1)
+@if (Model.IsError)
+{
+    <div class="alert alert-danger">
+        <strong>Backend Failed!</strong> Backend failed, you may retry...
     </div>
-    <div data-page="2" style="display:none;">
-        @Html.Raw(ViewBag.Page2)
-    </div>
-    <div data-page="3" style="display:none;">
-        @Html.Raw(ViewBag.Page3)
+}
+else
+{
+    <div class="pagination-container">
+        <div data-page="1">
+            @Html.Raw(Model.Page1)
+        </div>
+        <div data-page="2" style="display:none;">
+            @Html.Raw(Model.Page2)
+        </div>
+        <div data-page="3" style="display:none;">
+            @Html.Raw(Model.Page3)
+        </div>
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item" data-page="1"><a class="page-link" href="#">1</a></li>
+                <li class="page-item" data-page="2"><a class="page-link" href="#">2</a></li>
+                <li class="page-item" data-page="3"><a class="page-link" href="#">3</a></li>
+            </ul>
+        </nav>
     </div>
 
-    <nav aria-label="Page navigation example">
-        <ul class="pagination">
-            <li class="page-item" data-page="1"><a class="page-link" href="#">1</a></li>
-            <li class="page-item" data-page="2"><a class="page-link" href="#">2</a></li>
-            <li class="page-item" data-page="3"><a class="page-link" href="#">3</a></li>
-        </ul>
-    </nav>
-</div>
-
-Last updated: @ViewBag.LastUpdateTime
-
+    <div>Last updated: @Model.LastUpdateTime</div>
+}
 @section Scripts {
     <script>
         var paginationHandler = function () {
