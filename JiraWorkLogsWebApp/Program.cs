@@ -1,6 +1,7 @@
 using JiraWorkLogsWebApp.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -50,6 +51,7 @@ namespace JiraWorkLogsWebApp
             // for otlp
             //tracing.AddOtlpExporter(otlpOptions => otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint));
 
+            builder.Services.AddSingleton<MemoryCache>();
             builder.Services.AddSingleton<MessageSender>();
             builder.Services.AddSingleton<Task<RedisConnection>>(x =>
                 RedisConnection.InitializeAsync(Constants.RedisConnectionString));

@@ -1,5 +1,6 @@
 using JiraWorkLogsWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 using Utils;
 
@@ -8,14 +9,17 @@ namespace JiraWorkLogsWebApp.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> logger;
+        private readonly IMemoryCache cache;
         private readonly Task<RedisConnection> redisConnectionFactory;
         private readonly MessageSender messageSender;
 
         public HomeController(ILogger<HomeController> logger,
+            IMemoryCache cache,
             Task<RedisConnection> redisConnectionFactory,
             MessageSender messageSender)
         {
             this.logger = logger;
+            this.cache = cache;
             this.redisConnectionFactory = redisConnectionFactory;
             this.messageSender = messageSender;
         }
@@ -28,22 +32,36 @@ namespace JiraWorkLogsWebApp.Controllers
             using var activity = Program.JiraActivitySource.StartActivity(activityName)?
                 .AddBaggage("RemoteIpAddress", remoteIpAddress);
 
-            var redisConnection = await this.redisConnectionFactory;
-            activity?.AddEvent(new ActivityEvent("page1"));
-            ViewBag.Page1 = (await redisConnection.BasicRetryAsync(async (db) => await db.StringGetAsync("page1"))).ToString();
-            activity?.AddEvent(new ActivityEvent("page2"));
-            ViewBag.Page2 = (await redisConnection.BasicRetryAsync(async (db) => await db.StringGetAsync("page2"))).ToString();
-            activity?.AddEvent(new ActivityEvent("page3"));
-            ViewBag.Page3 = (await redisConnection.BasicRetryAsync(async (db) => await db.StringGetAsync("page3"))).ToString();
-            activity?.AddEvent(new ActivityEvent("lastupdatetime"));
-            ViewBag.LastUpdateTime = (await redisConnection.BasicRetryAsync(async (db) => await db.StringGetAsync("LastUpdateTime"))).ToString();
+            var cacheKey = "Connection";
+            if (this.cache.TryGetValue(cacheKey, out bool isAvailable) && !isAvailable)
+                return View(new IndexViewModel { IsError = true });
 
-            this.logger.LogInformation("Incrementing greeting");
-            Program.CountGreetings.Add(1);
+            try
+            {
+                var model = new IndexViewModel();
 
-            activity?.SetTag("greeting", Program.CountGreetings);
+                var redisConnection = await this.redisConnectionFactory;
+                activity?.AddEvent(new ActivityEvent("page1"));
+                model.Page1 = (await redisConnection.BasicRetryAsync(async (db) => await db.StringGetAsync("page1"))).ToString();
+                activity?.AddEvent(new ActivityEvent("page2"));
+                model.Page2 = (await redisConnection.BasicRetryAsync(async (db) => await db.StringGetAsync("page2"))).ToString();
+                activity?.AddEvent(new ActivityEvent("page3"));
+                model.Page3 = (await redisConnection.BasicRetryAsync(async (db) => await db.StringGetAsync("page3"))).ToString();
+                activity?.AddEvent(new ActivityEvent("lastupdatetime"));
+                model.LastUpdateTime = (await redisConnection.BasicRetryAsync(async (db) => await db.StringGetAsync("LastUpdateTime"))).ToString();
 
-            return View();
+                this.logger.LogInformation("Incrementing greeting");
+                Program.CountGreetings.Add(1);
+
+                activity?.SetTag("greeting", Program.CountGreetings);
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                this.cache.Set(cacheKey, false, TimeSpan.FromSeconds(15));
+                return View(new IndexViewModel { IsError = true });
+            }
         }
 
         public async Task<ActionResult> Redis()
