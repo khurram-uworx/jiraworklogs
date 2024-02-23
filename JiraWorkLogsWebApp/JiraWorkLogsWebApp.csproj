@@ -27,6 +27,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Utils\Utils.csproj" />
+    <ProjectReference Include="..\UWorx.JiraWorkLogs.Redis\UWorx.JiraWorkLogs.Redis.csproj" />
+    <ProjectReference Include="..\UWorx.JiraWorkLogs\UWorx.JiraWorkLogs.csproj" />
   </ItemGroup>
 
 </Project>

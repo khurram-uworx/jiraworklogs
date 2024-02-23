@@ -8,6 +8,8 @@ using OpenTelemetry.Trace;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using Utils;
+using UWorx.JiraWorkLogs;
+using UWorx.JiraWorkLogs.Redis;
 
 namespace JiraWorkLogsWebApp
 {
@@ -47,14 +49,16 @@ namespace JiraWorkLogsWebApp
                 .AddHttpClientInstrumentation()
                 .AddSource(JiraActivitySource.Name)
                 .AddZipkinExporter(b => b.Endpoint = Constants.ZipkinEndpoint)
-                .AddConsoleExporter());
+#if DEBUG
+                .AddConsoleExporter()
+#endif
+                );
             // for otlp
             //tracing.AddOtlpExporter(otlpOptions => otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint));
 
             builder.Services.AddSingleton<MemoryCache>();
-            builder.Services.AddSingleton<MessageSender>();
-            builder.Services.AddSingleton<Task<RedisConnection>>(x =>
-                RedisConnection.InitializeAsync(Constants.RedisConnectionString));
+            builder.Services.AddTransient<MessageSender>();
+            builder.Services.AddTransient<IWebAppDataStore>(p => new RedisWebAppDataStore(Constants.RedisConnectionString));
 
             var app = builder.Build();
             app.UseOpenTelemetryPrometheusScrapingEndpoint();
