@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UWorx.JiraWorkLogs.Redis;
 
-public class RedisConnection : IDisposable
+class RedisConnection : IDisposable
 {
     private long _lastReconnectTicks = DateTimeOffset.MinValue.UtcTicks;
     private DateTimeOffset _firstErrorTime = DateTimeOffset.MinValue;
