@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Utils;
 using JiraWorkLogsService.Helpers;
+using UWorx.JiraWorkLogs.Redis;
 
 namespace JiraWorkLogsService
 {
@@ -44,7 +45,7 @@ namespace JiraWorkLogsService
 
                     try
                     {
-                        var summarizer = new Summarizer();
+                        var summarizer = new Summarizer(new RedisWebAppDataStore(Constants.RedisConnectionString));
                         int r = summarizer.ProcessAsync(ServiceConstants.Emails).Result;
                         e.MessageActivity?.AddEvent(new ActivityEvent("Cache updated"));
                     }

@@ -4,12 +4,20 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Utils;
+using UWorx.JiraWorkLogs;
 using UWorx.JiraWorkLogs.Redis;
 
 namespace JiraWorkLogsService.Helpers;
 
 class Summarizer
 {
+    private readonly IWebAppDataStore dataStore;
+
+    public Summarizer(IWebAppDataStore dataStore)
+    {
+        this.dataStore = dataStore;
+    }
+
     public async Task<int> ProcessAsync(string[] emails, DateTime start)
     {
         var finish = start.AddMonths(1);
@@ -53,17 +61,11 @@ class Summarizer
             }
         }
 
-        var key = "LastUpdateTime";
-        var value = DateTime.UtcNow.ToString();
-        RedisConnection redisConnection = await RedisConnection.InitializeAsync(Constants.RedisConnectionString);
+        await this.dataStore.SaveHtmlAsync(1, dictionary.Page1);
+        await this.dataStore.SaveHtmlAsync(2, dictionary.Page2);
+        await this.dataStore.SaveHtmlAsync(3, dictionary.Page3);
 
-        await redisConnection.BasicRetryAsync(async db => await db.StringSetAsync("page1", dictionary.Page1));
-        await redisConnection.BasicRetryAsync(async db => await db.StringSetAsync("page2", dictionary.Page2));
-        await redisConnection.BasicRetryAsync(async db => await db.StringSetAsync("page3", dictionary.Page3));
-
-        await redisConnection.BasicRetryAsync(async db => await db.StringSetAsync(key, value));
-
-        return 4;
+        return 3;
     }
 
     public async Task<int> ProcessAsync(string[] emails)

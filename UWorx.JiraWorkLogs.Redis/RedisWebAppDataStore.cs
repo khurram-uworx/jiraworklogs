@@ -29,6 +29,13 @@ namespace UWorx.JiraWorkLogs.Redis
             await redisConnection.BasicRetryAsync(async db => await db.StringSetAsync("page3", "<ul><li>Hello<li>Redis</ul>"));
         }
 
+        public async Task SaveHtmlAsync(int page, string html)
+        {
+            var value = DateTime.UtcNow.ToString();
+            await redisConnection.BasicRetryAsync(async db => await db.StringSetAsync($"page{page}", html));
+            await redisConnection.BasicRetryAsync(async db => await db.StringSetAsync(KeyLastUpdateTime, value));
+        }
+
         public async Task<string> GetHtmlAsync(int page)
         {
             return (await redisConnection.BasicRetryAsync(async (db) => await db.StringGetAsync($"page{page}"))).ToString();
