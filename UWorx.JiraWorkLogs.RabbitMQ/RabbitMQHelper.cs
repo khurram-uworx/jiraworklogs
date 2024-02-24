@@ -6,30 +6,23 @@ using System.Diagnostics;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Utils.Helpers;
+namespace UWorx.JiraWorkLogs.RabbitMQ;
 
-static class RabbitMqHelper
+static class RabbitMQHelper
 {
     public const string DefaultExchangeName = "";
     public const string TestQueueName = "TestQueue";
 
-    private static readonly ConnectionFactory ConnectionFactory;
-
-    static RabbitMqHelper()
+    public static IConnection CreateConnection(string host, string user, string password)
     {
-        ConnectionFactory = new ConnectionFactory()
+        ConnectionFactory ConnectionFactory = new ConnectionFactory()
         {
-            HostName = Constants.RabbitMqHost,
-            UserName = Constants.RabbitMqUser,
-            Password = Constants.RabbitMqPassword,
-            Port = 5672,
+            HostName = host, Port = 5672,
+            UserName = user, Password = password,
             RequestedConnectionTimeout = TimeSpan.FromMilliseconds(3000),
             ClientProvidedName = Environment.MachineName
         };
-    }
 
-    public static IConnection CreateConnection()
-    {
         return ConnectionFactory.CreateConnection();
     }
 

@@ -2,8 +2,8 @@ using JiraWorkLogsWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
-using Utils;
 using UWorx.JiraWorkLogs;
+using UWorx.JiraWorkLogs.RabbitMQ;
 
 namespace JiraWorkLogsWebApp.Controllers
 {
@@ -12,11 +12,11 @@ namespace JiraWorkLogsWebApp.Controllers
         const string CacheKey = "Connection";
         private readonly ILogger<HomeController> logger;
         private readonly IMemoryCache cache;
-        private readonly IWebAppDataStore dataStore;
+        private readonly IWebAppRepository dataStore;
 
         public HomeController(ILogger<HomeController> logger,
             IMemoryCache cache,
-            IWebAppDataStore dataStore)
+            IWebAppRepository dataStore)
         {
             this.logger = logger;
             this.cache = cache;
@@ -28,7 +28,7 @@ namespace JiraWorkLogsWebApp.Controllers
             var remoteIpAddress = this.HttpContext.Connection.RemoteIpAddress?.ToString();
 
             var activityName = $"Home/Index";
-            using var activity = Program.JiraActivitySource.StartActivity(activityName)?
+            using var activity = JiraWorkLogsWebApp.JiraActivitySource.StartActivity(activityName)?
                 .AddBaggage("RemoteIpAddress", remoteIpAddress);
 
             if (this.cache.TryGetValue(CacheKey, out bool isAvailable) && !isAvailable)
@@ -51,9 +51,9 @@ namespace JiraWorkLogsWebApp.Controllers
                 model.LastUpdateTime = await this.dataStore.GetLastUpdateAsync();
 
                 this.logger.LogInformation("Incrementing greeting");
-                Program.CountGreetings.Add(1);
+                JiraWorkLogsWebApp.CountGreetings.Add(1);
 
-                activity?.SetTag("greeting", Program.CountGreetings);
+                activity?.SetTag("greeting", JiraWorkLogsWebApp.CountGreetings);
 
                 return View(model);
             }
@@ -72,10 +72,10 @@ namespace JiraWorkLogsWebApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public ActionResult Rabbit([FromServices] MessageSender messageSender)
+        public ActionResult Sync([FromServices] IWebAppMessagingService messageSender)
         {
-            messageSender.SendMessage();
-            this.ViewBag.Message = "RabbitMQ message is sent";
+            messageSender.TriggerJiraSync();
+            this.ViewBag.Message = "Sync is triggered";
             return View();
         }
 

@@ -9,24 +9,23 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using Utils.Helpers;
 
-namespace Utils;
+namespace UWorx.JiraWorkLogs.RabbitMQ;
 
-public class MessageSender : IDisposable
+class MessageSender : IDisposable
 {
     private static readonly ActivitySource ActivitySource = new(nameof(MessageSender));
     private static readonly TextMapPropagator Propagator = Propagators.DefaultTextMapPropagator;
 
-    private readonly ILogger<MessageSender> logger;
+    private readonly ILogger logger;
     private readonly IConnection connection;
     private readonly IModel channel;
 
-    public MessageSender(ILogger<MessageSender> logger)
+    public MessageSender(ILogger logger, string host, string user, string password)
     {
         this.logger = logger;
-        this.connection = RabbitMqHelper.CreateConnection();
-        this.channel = RabbitMqHelper.CreateModelAndDeclareTestQueue(this.connection);
+        this.connection = RabbitMQHelper.CreateConnection(host, user, password);
+        this.channel = RabbitMQHelper.CreateModelAndDeclareTestQueue(this.connection);
     }
 
     public void Dispose()
@@ -41,7 +40,7 @@ public class MessageSender : IDisposable
         {
             // Start an activity with a name following the semantic convention of the OpenTelemetry messaging specification.
             // https://github.com/open-telemetry/semantic-conventions/blob/main/docs/messaging/messaging-spans.md#span-name
-            var activityName = $"{RabbitMqHelper.TestQueueName} send";
+            var activityName = $"{RabbitMQHelper.TestQueueName} send";
 
             using var activity = ActivitySource.StartActivity(activityName, ActivityKind.Producer);
             var props = this.channel.CreateBasicProperties();
@@ -65,12 +64,12 @@ public class MessageSender : IDisposable
             Propagator.Inject(new PropagationContext(contextToInject, Baggage.Current), props, this.InjectTraceContextIntoBasicProperties);
 
             // The OpenTelemetry messaging specification defines a number of attributes. These attributes are added here.
-            RabbitMqHelper.AddMessagingTags(activity);
+            RabbitMQHelper.AddMessagingTags(activity);
             var body = $"Published message: DateTime.Now = {DateTime.Now}.";
 
             this.channel.BasicPublish(
-                exchange: RabbitMqHelper.DefaultExchangeName,
-                routingKey: RabbitMqHelper.TestQueueName,
+                exchange: RabbitMQHelper.DefaultExchangeName,
+                routingKey: RabbitMQHelper.TestQueueName,
                 basicProperties: props,
                 body: Encoding.UTF8.GetBytes(body));
 

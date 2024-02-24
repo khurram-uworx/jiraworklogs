@@ -11,31 +11,25 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Utils.Helpers;
 
-namespace Utils;
+namespace UWorx.JiraWorkLogs.RabbitMQ;
 
-public class ActivityEventArgs : EventArgs
-{
-    public Activity MessageActivity { get; set; }
-}
-
-public class MessageReceiver : IDisposable
+class MessageReceiver : IDisposable
 {
     private static readonly ActivitySource ActivitySource = new(nameof(MessageReceiver));
     private static readonly TextMapPropagator Propagator = Propagators.DefaultTextMapPropagator;
 
-    private readonly ILogger<MessageReceiver> logger;
+    private readonly ILogger logger;
     private readonly IConnection connection;
     private readonly IModel channel;
 
     public event EventHandler<ActivityEventArgs> OnMessageReceived;
 
-    public MessageReceiver(ILogger<MessageReceiver> logger)
+    public MessageReceiver(ILogger logger, string host, string user, string password)
     {
         this.logger = logger;
-        this.connection = RabbitMqHelper.CreateConnection();
-        this.channel = RabbitMqHelper.CreateModelAndDeclareTestQueue(this.connection);
+        this.connection = RabbitMQHelper.CreateConnection(host, user, password);
+        this.channel = RabbitMQHelper.CreateModelAndDeclareTestQueue(this.connection);
     }
 
     public void Dispose()
@@ -46,7 +40,7 @@ public class MessageReceiver : IDisposable
 
     public void StartConsumer()
     {
-        RabbitMqHelper.StartConsumer(this.channel, this.ReceiveMessage);
+        RabbitMQHelper.StartConsumer(this.channel, this.ReceiveMessage);
     }
 
     public void ReceiveMessage(BasicDeliverEventArgs ea)
@@ -69,7 +63,7 @@ public class MessageReceiver : IDisposable
             activity?.SetTag("message", message);
 
             // The OpenTelemetry messaging specification defines a number of attributes. These attributes are added here.
-            RabbitMqHelper.AddMessagingTags(activity);
+            RabbitMQHelper.AddMessagingTags(activity);
 
             if (null != this.OnMessageReceived)
                 this.OnMessageReceived(this, new ActivityEventArgs { MessageActivity = activity }); ;

@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 
 namespace UWorx.JiraWorkLogs.Redis
 {
-    public class RedisWebAppDataStore : IWebAppDataStore
+    public class RedisWebAppRepository : IWebAppRepository, IServiceRepository
     {
         const string KeyLastUpdateTime = "LastUpdateTime";
         readonly RedisConnection redisConnection = null;
 
-        public RedisWebAppDataStore(string connectionString)
+        public RedisWebAppRepository(string connectionString)
         {
             this.redisConnection = RedisConnection.InitializeAsync(connectionString).Result;
         }
