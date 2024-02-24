@@ -10,9 +10,9 @@ namespace JiraWorkLogsWebApp.Controllers
     public class HomeController : Controller
     {
         const string CacheKey = "Connection";
-        private readonly ILogger<HomeController> logger;
-        private readonly IMemoryCache cache;
-        private readonly IWebAppRepository dataStore;
+        readonly ILogger<HomeController> logger;
+        readonly IMemoryCache cache;
+        readonly IWebAppRepository dataStore;
 
         public HomeController(ILogger<HomeController> logger,
             IMemoryCache cache,
