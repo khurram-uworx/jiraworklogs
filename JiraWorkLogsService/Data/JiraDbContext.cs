@@ -4,7 +4,7 @@ using UWorx.JiraWorkLogs;
 
 namespace JiraWorkLogsService.Data;
 
-internal class TeamMember
+class TeamMember
 {
     public int TeamMemberId { get; set; }
     public string TeamMemberName { get; set; } = string.Empty;
@@ -12,7 +12,7 @@ internal class TeamMember
     public bool Concerned { get; set; } = false;
 }
 
-internal class Worklog
+class Worklog
 {
     public int WorklogId { get; set; }
     public string WorklogJiraId { get; set; } = string.Empty;
@@ -23,7 +23,7 @@ internal class Worklog
     public TeamMember TeamMember { get; set; }
 }
 
-internal class JiraDbContext : DbContext
+class JiraDbContext : DbContext
 {
     public DbSet<TeamMember> TeamMembers { get; set; }
     public DbSet<Worklog> Worklogs { get; set; }

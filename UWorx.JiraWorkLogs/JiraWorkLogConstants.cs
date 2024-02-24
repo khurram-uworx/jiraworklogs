@@ -22,18 +22,5 @@ public static class JiraWorkLogConstants
         }
     }
 
-    public static string RabbitMqHost { get => "rabbitmq"; }
-
-    public static string RabbitMqUser { get => "guest"; }
-
-    public static string RabbitMqPassword { get => "guest"; }
-
-    public static string RedisConnectionString
-    {
-        get
-        {
-            var redisHostName = Environment.GetEnvironmentVariable("REDIS_HOSTNAME") ?? "redis";
-            return $"{redisHostName}:6379,abortConnect=false";
-        }
-    }
+    
 }

@@ -45,7 +45,7 @@ namespace JiraWorkLogsService
 
                     try
                     {
-                        var summarizer = new Summarizer(new RedisRepository(this.logger, JiraWorkLogConstants.RedisConnectionString));
+                        var summarizer = new Summarizer(new RedisRepository(this.logger));
                         int r = summarizer.ProcessAsync(ServiceConstants.Emails).Result;
                         e.MessageActivity?.AddEvent(new ActivityEvent("Cache updated"));
                     }
