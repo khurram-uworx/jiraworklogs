@@ -11,10 +11,10 @@ namespace UWorx.JiraWorkLogs.Redis
         readonly ILogger logger;
         readonly RedisConnection redisConnection = null;
 
-        public RedisRepository(ILogger logger, string connectionString)
+        public RedisRepository(ILogger logger)
         {
             this.logger = logger;
-            this.redisConnection = RedisConnection.InitializeAsync(connectionString).Result;
+            this.redisConnection = RedisConnection.InitializeAsync(RedisConstants.RedisConnectionString).Result;
         }
 
         public async Task InitializeAsync()

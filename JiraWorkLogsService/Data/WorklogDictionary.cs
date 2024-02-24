@@ -5,7 +5,7 @@ using System.Text;
 
 namespace JiraWorkLogsService.Data;
 
-internal class WorklogDictionary : Dictionary<string, Dictionary<int, long>>    // dictionary[email][day] = timeWorkedInSeconds
+class WorklogDictionary : Dictionary<string, Dictionary<int, long>>    // dictionary[email][day] = timeWorkedInSeconds
 {
     double numberOfDays = 0;
     DateTime month;

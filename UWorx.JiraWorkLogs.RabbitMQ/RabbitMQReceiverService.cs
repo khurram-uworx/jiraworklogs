@@ -9,9 +9,10 @@ public class RabbitMQReceiverService : IServiceMessagingService
 
     public event EventHandler<ActivityEventArgs> OnMessageReceived;
 
-    public RabbitMQReceiverService(ILogger<RabbitMQReceiverService> logger, string host, string user, string password)
+    public RabbitMQReceiverService(ILogger<RabbitMQReceiverService> logger)
     {
-        this.messageReceiver = new MessageReceiver(logger, host, user, password);
+        this.messageReceiver = new MessageReceiver(logger,
+            RabbitMQConstants.RabbitMqHost, RabbitMQConstants.RabbitMqUser, RabbitMQConstants.RabbitMqPassword);
     }
 
     public void StartConsumer()

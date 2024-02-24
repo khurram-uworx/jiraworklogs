@@ -5,19 +5,16 @@ namespace UWorx.JiraWorkLogs.RabbitMQ;
 public class RabbitMQSenderService : IWebAppMessagingService
 {
     readonly ILogger<RabbitMQSenderService> logger;
-    readonly string host, user, password;
 
-    public RabbitMQSenderService(ILogger<RabbitMQSenderService> logger, string host, string user, string password)
+    public RabbitMQSenderService(ILogger<RabbitMQSenderService> logger)
     {
         this.logger = logger;
-        this.host = host;
-        this.user = user;
-        this.password = password;
     }
 
     public void TriggerJiraSync()
     {
-        var ms = new MessageSender(this.logger, this.host, this.user, this.password);
+        var ms = new MessageSender(this.logger,
+            RabbitMQConstants.RabbitMqHost, RabbitMQConstants.RabbitMqUser, RabbitMQConstants.RabbitMqPassword);
         ms.SendMessage();
     }
 }

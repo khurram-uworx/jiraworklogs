@@ -44,8 +44,7 @@ public class JiraWorkLogsService
         builder.Services.AddSingleton<IServiceMessagingService>(f =>
         {
             var logger = f.GetRequiredService<ILogger<RabbitMQReceiverService>>();
-            return new RabbitMQReceiverService(logger,
-                JiraWorkLogConstants.RabbitMqHost, JiraWorkLogConstants.RabbitMqUser, JiraWorkLogConstants.RabbitMqPassword);
+            return new RabbitMQReceiverService(logger);
         });
 
         var host = builder.Build();
