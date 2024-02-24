@@ -14,10 +14,10 @@ namespace JiraWorkLogsService
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> logger;
-        private readonly MessageReceiver messageReceiver;
+        private readonly IServiceMessagingService messageReceiver;
 
         public Worker(ILogger<Worker> logger,
-            MessageReceiver messageReceiver)
+            IServiceMessagingService messageReceiver)
         {
             this.logger = logger;
             this.messageReceiver = messageReceiver;

@@ -14,23 +14,18 @@ using System.Text;
 
 namespace UWorx.JiraWorkLogs.RabbitMQ;
 
-public class ActivityEventArgs : EventArgs
-{
-    public Activity MessageActivity { get; set; }
-}
-
-public class MessageReceiver : IDisposable
+class MessageReceiver : IDisposable
 {
     private static readonly ActivitySource ActivitySource = new(nameof(MessageReceiver));
     private static readonly TextMapPropagator Propagator = Propagators.DefaultTextMapPropagator;
 
-    private readonly ILogger<MessageReceiver> logger;
+    private readonly ILogger logger;
     private readonly IConnection connection;
     private readonly IModel channel;
 
     public event EventHandler<ActivityEventArgs> OnMessageReceived;
 
-    public MessageReceiver(ILogger<MessageReceiver> logger, string host, string user, string password)
+    public MessageReceiver(ILogger logger, string host, string user, string password)
     {
         this.logger = logger;
         this.connection = RabbitMQHelper.CreateConnection(host, user, password);

@@ -11,45 +11,44 @@ using System.Diagnostics.Metrics;
 using UWorx.JiraWorkLogs;
 using UWorx.JiraWorkLogs.RabbitMQ;
 
-namespace JiraWorkLogsService
+namespace JiraWorkLogsService;
+
+public class JiraWorkLogsService
 {
-    public class JiraWorkLogsService
+    internal static ActivitySource JiraActivitySource;
+    internal static Counter<int> CountGreetings;
+
+    public static void Main(string[] args)
     {
-        internal static ActivitySource JiraActivitySource;
-        internal static Counter<int> CountGreetings;
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-        public static void Main(string[] args)
+        var builder = Host.CreateApplicationBuilder(args);
+        builder.Services.AddHostedService<Worker>();
+
+        JiraActivitySource = new ActivitySource(builder.Environment.ApplicationName);
+        var greeterMeter = new Meter(builder.Environment.ApplicationName + ".Greeter");
+        CountGreetings = greeterMeter.CreateCounter<int>("greetings.count", description: "Counts the number of greetings");
+
+        var telemetryBuilder = builder.Services.AddOpenTelemetry();
+        telemetryBuilder.ConfigureResource(b => b.AddService(builder.Environment.ApplicationName));
+        telemetryBuilder.WithMetrics(metrics => metrics
+            .AddMeter(greeterMeter.Name));
+        telemetryBuilder.WithTracing(tracing => tracing
+            .AddHttpClientInstrumentation()
+            .AddSource(JiraActivitySource.Name)
+            .AddZipkinExporter(b => b.Endpoint = JiraWorkLogConstants.ZipkinEndpoint)
+            .AddConsoleExporter());
+        // for otlp
+        //tracing.AddOtlpExporter(otlpOptions => otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint));
+
+        builder.Services.AddSingleton<IServiceMessagingService>(f =>
         {
-            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            var logger = f.GetRequiredService<ILogger<RabbitMQReceiverService>>();
+            return new RabbitMQReceiverService(logger,
+                JiraWorkLogConstants.RabbitMqHost, JiraWorkLogConstants.RabbitMqUser, JiraWorkLogConstants.RabbitMqPassword);
+        });
 
-            var builder = Host.CreateApplicationBuilder(args);
-            builder.Services.AddHostedService<Worker>();
-
-            JiraActivitySource = new ActivitySource(builder.Environment.ApplicationName);
-            var greeterMeter = new Meter(builder.Environment.ApplicationName + ".Greeter");
-            CountGreetings = greeterMeter.CreateCounter<int>("greetings.count", description: "Counts the number of greetings");
-
-            var telemetryBuilder = builder.Services.AddOpenTelemetry();
-            telemetryBuilder.ConfigureResource(b => b.AddService(builder.Environment.ApplicationName));
-            telemetryBuilder.WithMetrics(metrics => metrics
-                .AddMeter(greeterMeter.Name));
-            telemetryBuilder.WithTracing(tracing => tracing
-                .AddHttpClientInstrumentation()
-                .AddSource(JiraActivitySource.Name)
-                .AddZipkinExporter(b => b.Endpoint = JiraWorkLogConstants.ZipkinEndpoint)
-                .AddConsoleExporter());
-            // for otlp
-            //tracing.AddOtlpExporter(otlpOptions => otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint));
-
-            builder.Services.AddSingleton<MessageReceiver>(f =>
-            {
-                var logger = f.GetRequiredService<ILogger<MessageReceiver>>();
-                return new MessageReceiver(logger,
-                    JiraWorkLogConstants.RabbitMqHost, JiraWorkLogConstants.RabbitMqUser, JiraWorkLogConstants.RabbitMqPassword);
-            });
-
-            var host = builder.Build();
-            host.Run();
-        }
+        var host = builder.Build();
+        host.Run();
     }
 }

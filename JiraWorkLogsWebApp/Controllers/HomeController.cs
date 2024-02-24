@@ -72,7 +72,7 @@ namespace JiraWorkLogsWebApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public ActionResult Sync([FromServices] IWebAppService messageSender)
+        public ActionResult Sync([FromServices] IWebAppMessagingService messageSender)
         {
             messageSender.TriggerJiraSync();
             this.ViewBag.Message = "Sync is triggered";

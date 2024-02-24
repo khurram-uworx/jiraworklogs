@@ -2,10 +2,10 @@
 
 namespace UWorx.JiraWorkLogs.RabbitMQ;
 
-public class RabbitMQService : IWebAppService
+public class RabbitMQService : IWebAppMessagingService
 {
     private readonly ILogger<RabbitMQService> logger;
-    string host, user, password;
+    private readonly string host, user, password;
 
     public RabbitMQService(ILogger<RabbitMQService> logger, string host, string user, string password)
     {
