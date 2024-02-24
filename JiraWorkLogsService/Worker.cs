@@ -6,15 +6,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using JiraWorkLogsService.Helpers;
 using UWorx.JiraWorkLogs.Redis;
-using UWorx.JiraWorkLogs.RabbitMQ;
 using UWorx.JiraWorkLogs;
 
 namespace JiraWorkLogsService
 {
     public class Worker : BackgroundService
     {
-        private readonly ILogger<Worker> logger;
-        private readonly IServiceMessagingService messageReceiver;
+        readonly ILogger<Worker> logger;
+        readonly IServiceMessagingService messageReceiver;
 
         public Worker(ILogger<Worker> logger,
             IServiceMessagingService messageReceiver)
@@ -46,7 +45,7 @@ namespace JiraWorkLogsService
 
                     try
                     {
-                        var summarizer = new Summarizer(new RedisWebAppRepository(JiraWorkLogConstants.RedisConnectionString));
+                        var summarizer = new Summarizer(new RedisRepository(this.logger, JiraWorkLogConstants.RedisConnectionString));
                         int r = summarizer.ProcessAsync(ServiceConstants.Emails).Result;
                         e.MessageActivity?.AddEvent(new ActivityEvent("Cache updated"));
                     }
