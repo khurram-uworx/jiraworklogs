@@ -59,11 +59,9 @@ public class JiraWorkLogsWebApp
 
         builder.Services.AddSingleton<MemoryCache>();
         builder.Services.AddTransient<IWebAppRepository>(p => new RedisRepository(
-            p.GetRequiredService<ILogger>(),
-            JiraWorkLogConstants.RedisConnectionString));
+            p.GetRequiredService<ILogger>()));
         builder.Services.AddTransient<IWebAppMessagingService>(p => new RabbitMQSenderService(
-            p.GetRequiredService<ILogger<RabbitMQSenderService>>(),
-            JiraWorkLogConstants.RabbitMqHost, JiraWorkLogConstants.RabbitMqUser, JiraWorkLogConstants.RabbitMqPassword));
+            p.GetRequiredService<ILogger<RabbitMQSenderService>>()));
 
         var app = builder.Build();
 
