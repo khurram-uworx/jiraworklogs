@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using Utils;
+using UWorx.JiraWorkLogs;
 
 namespace JiraWorkLogsService.Data;
 
@@ -30,7 +30,7 @@ internal class JiraDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(Constants.DatabaseConnectionString);
+        optionsBuilder.UseNpgsql(JiraWorkLogConstants.DatabaseConnectionString);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

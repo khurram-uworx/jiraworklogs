@@ -7,8 +7,8 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
-using Utils;
 using UWorx.JiraWorkLogs;
+using UWorx.JiraWorkLogs.RabbitMQ;
 using UWorx.JiraWorkLogs.Redis;
 
 namespace JiraWorkLogsWebApp
@@ -23,7 +23,7 @@ namespace JiraWorkLogsWebApp
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            var connectionString = Constants.DatabaseConnectionString ?? throw new InvalidOperationException("Connection string not found.");
+            var connectionString = JiraWorkLogConstants.DatabaseConnectionString ?? throw new InvalidOperationException("Connection string not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -48,7 +48,7 @@ namespace JiraWorkLogsWebApp
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
                 .AddSource(JiraActivitySource.Name)
-                .AddZipkinExporter(b => b.Endpoint = Constants.ZipkinEndpoint)
+                .AddZipkinExporter(b => b.Endpoint = JiraWorkLogConstants.ZipkinEndpoint)
 #if DEBUG
                 .AddConsoleExporter()
 #endif
@@ -58,7 +58,7 @@ namespace JiraWorkLogsWebApp
 
             builder.Services.AddSingleton<MemoryCache>();
             builder.Services.AddTransient<MessageSender>();
-            builder.Services.AddTransient<IWebAppDataStore>(p => new RedisWebAppDataStore(Constants.RedisConnectionString));
+            builder.Services.AddTransient<IWebAppRepository>(p => new RedisWebAppRepository(JiraWorkLogConstants.RedisConnectionString));
 
             var app = builder.Build();
             app.UseOpenTelemetryPrometheusScrapingEndpoint();

@@ -1,5 +1,5 @@
 using FluentAssertions;
-using Utils;
+using UWorx.JiraWorkLogs;
 
 namespace JiraWorkLogsTests;
 
@@ -12,7 +12,7 @@ public class UnitTests
         // Arrange
 
         // Act
-        var connectionString = Constants.DatabaseConnectionString;
+        var connectionString = JiraWorkLogConstants.DatabaseConnectionString;
 
         // Assert
         Assert.IsTrue(null != connectionString && connectionString.Length > 0);

@@ -2,8 +2,8 @@ using JiraWorkLogsWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
-using Utils;
 using UWorx.JiraWorkLogs;
+using UWorx.JiraWorkLogs.RabbitMQ;
 
 namespace JiraWorkLogsWebApp.Controllers
 {
@@ -12,11 +12,11 @@ namespace JiraWorkLogsWebApp.Controllers
         const string CacheKey = "Connection";
         private readonly ILogger<HomeController> logger;
         private readonly IMemoryCache cache;
-        private readonly IWebAppDataStore dataStore;
+        private readonly IWebAppRepository dataStore;
 
         public HomeController(ILogger<HomeController> logger,
             IMemoryCache cache,
-            IWebAppDataStore dataStore)
+            IWebAppRepository dataStore)
         {
             this.logger = logger;
             this.cache = cache;

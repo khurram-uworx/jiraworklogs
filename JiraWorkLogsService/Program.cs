@@ -6,7 +6,8 @@ using OpenTelemetry.Trace;
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
-using Utils;
+using UWorx.JiraWorkLogs;
+using UWorx.JiraWorkLogs.RabbitMQ;
 
 namespace JiraWorkLogsService
 {
@@ -33,7 +34,7 @@ namespace JiraWorkLogsService
             telemetryBuilder.WithTracing(tracing => tracing
                 .AddHttpClientInstrumentation()
                 .AddSource(JiraActivitySource.Name)
-                .AddZipkinExporter(b => b.Endpoint = Constants.ZipkinEndpoint)
+                .AddZipkinExporter(b => b.Endpoint = JiraWorkLogConstants.ZipkinEndpoint)
                 .AddConsoleExporter());
             // for otlp
             //tracing.AddOtlpExporter(otlpOptions => otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint));

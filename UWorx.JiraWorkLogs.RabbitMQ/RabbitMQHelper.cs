@@ -6,22 +6,22 @@ using System.Diagnostics;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Utils.Helpers;
+namespace UWorx.JiraWorkLogs.RabbitMQ;
 
-static class RabbitMqHelper
+static class RabbitMQHelper
 {
     public const string DefaultExchangeName = "";
     public const string TestQueueName = "TestQueue";
 
     private static readonly ConnectionFactory ConnectionFactory;
 
-    static RabbitMqHelper()
+    static RabbitMQHelper()
     {
         ConnectionFactory = new ConnectionFactory()
         {
-            HostName = Constants.RabbitMqHost,
-            UserName = Constants.RabbitMqUser,
-            Password = Constants.RabbitMqPassword,
+            HostName = JiraWorkLogConstants.RabbitMqHost,
+            UserName = JiraWorkLogConstants.RabbitMqUser,
+            Password = JiraWorkLogConstants.RabbitMqPassword,
             Port = 5672,
             RequestedConnectionTimeout = TimeSpan.FromMilliseconds(3000),
             ClientProvidedName = Environment.MachineName

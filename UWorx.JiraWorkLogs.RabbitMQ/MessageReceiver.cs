@@ -11,9 +11,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Utils.Helpers;
 
-namespace Utils;
+namespace UWorx.JiraWorkLogs.RabbitMQ;
 
 public class ActivityEventArgs : EventArgs
 {
@@ -34,8 +33,8 @@ public class MessageReceiver : IDisposable
     public MessageReceiver(ILogger<MessageReceiver> logger)
     {
         this.logger = logger;
-        this.connection = RabbitMqHelper.CreateConnection();
-        this.channel = RabbitMqHelper.CreateModelAndDeclareTestQueue(this.connection);
+        this.connection = RabbitMQHelper.CreateConnection();
+        this.channel = RabbitMQHelper.CreateModelAndDeclareTestQueue(this.connection);
     }
 
     public void Dispose()
@@ -46,7 +45,7 @@ public class MessageReceiver : IDisposable
 
     public void StartConsumer()
     {
-        RabbitMqHelper.StartConsumer(this.channel, this.ReceiveMessage);
+        RabbitMQHelper.StartConsumer(this.channel, this.ReceiveMessage);
     }
 
     public void ReceiveMessage(BasicDeliverEventArgs ea)
@@ -69,7 +68,7 @@ public class MessageReceiver : IDisposable
             activity?.SetTag("message", message);
 
             // The OpenTelemetry messaging specification defines a number of attributes. These attributes are added here.
-            RabbitMqHelper.AddMessagingTags(activity);
+            RabbitMQHelper.AddMessagingTags(activity);
 
             if (null != this.OnMessageReceived)
                 this.OnMessageReceived(this, new ActivityEventArgs { MessageActivity = activity }); ;

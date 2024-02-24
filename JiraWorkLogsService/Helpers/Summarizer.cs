@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Utils;
 using UWorx.JiraWorkLogs;
 using UWorx.JiraWorkLogs.Redis;
 
@@ -11,9 +10,9 @@ namespace JiraWorkLogsService.Helpers;
 
 class Summarizer
 {
-    private readonly IWebAppDataStore dataStore;
+    private readonly IServiceRepository dataStore;
 
-    public Summarizer(IWebAppDataStore dataStore)
+    public Summarizer(IServiceRepository dataStore)
     {
         this.dataStore = dataStore;
     }

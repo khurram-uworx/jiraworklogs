@@ -4,9 +4,10 @@ using System.Diagnostics;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Utils;
 using JiraWorkLogsService.Helpers;
 using UWorx.JiraWorkLogs.Redis;
+using UWorx.JiraWorkLogs.RabbitMQ;
+using UWorx.JiraWorkLogs;
 
 namespace JiraWorkLogsService
 {
@@ -31,7 +32,7 @@ namespace JiraWorkLogsService
             Program.CountGreetings.Add(1);
             e.MessageActivity?.SetTag("greeting", Program.CountGreetings);
 
-            var jiraUrl = Constants.JiraUrl;
+            var jiraUrl = JiraWorkLogConstants.JiraUrl;
             if (!string.IsNullOrWhiteSpace(jiraUrl) && jiraUrl != "https://YOUR-COMPANY.atlassian.net")
             {
                 try
@@ -39,13 +40,13 @@ namespace JiraWorkLogsService
                     var jql = ServiceConstants.Jql;
                     if (string.IsNullOrEmpty(jql)) ArgumentException.ThrowIfNullOrEmpty("jql");
                     
-                    var j = new JiraHelper(Constants.JiraUrl, Constants.JiraUser, Constants.JiraToken);
+                    var j = new JiraHelper(JiraWorkLogConstants.JiraUrl, JiraWorkLogConstants.JiraUser, JiraWorkLogConstants.JiraToken);
                     j.ListIssuesAsync(jql).Wait();
                     e.MessageActivity?.AddEvent(new ActivityEvent("Jira Queuried"));
 
                     try
                     {
-                        var summarizer = new Summarizer(new RedisWebAppDataStore(Constants.RedisConnectionString));
+                        var summarizer = new Summarizer(new RedisWebAppRepository(JiraWorkLogConstants.RedisConnectionString));
                         int r = summarizer.ProcessAsync(ServiceConstants.Emails).Result;
                         e.MessageActivity?.AddEvent(new ActivityEvent("Cache updated"));
                     }
