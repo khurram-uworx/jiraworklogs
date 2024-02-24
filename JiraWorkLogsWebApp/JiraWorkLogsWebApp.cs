@@ -58,10 +58,11 @@ public class JiraWorkLogsWebApp
         //tracing.AddOtlpExporter(otlpOptions => otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint));
 
         builder.Services.AddSingleton<MemoryCache>();
-        builder.Services.AddTransient<IWebAppRepository>(p => new RedisWebAppRepository(
+        builder.Services.AddTransient<IWebAppRepository>(p => new RedisRepository(
+            p.GetRequiredService<ILogger>(),
             JiraWorkLogConstants.RedisConnectionString));
-        builder.Services.AddTransient<IWebAppMessagingService>(p => new RabbitMQService(
-            p.GetRequiredService<ILogger<RabbitMQService>>(),
+        builder.Services.AddTransient<IWebAppMessagingService>(p => new RabbitMQSenderService(
+            p.GetRequiredService<ILogger<RabbitMQSenderService>>(),
             JiraWorkLogConstants.RabbitMqHost, JiraWorkLogConstants.RabbitMqUser, JiraWorkLogConstants.RabbitMqPassword));
 
         var app = builder.Build();

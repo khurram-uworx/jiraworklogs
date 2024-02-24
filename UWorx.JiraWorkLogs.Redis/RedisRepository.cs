@@ -1,15 +1,19 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace UWorx.JiraWorkLogs.Redis
 {
-    public class RedisWebAppRepository : IWebAppRepository, IServiceRepository
+    public class RedisRepository : IWebAppRepository, IServiceRepository
     {
         const string KeyLastUpdateTime = "LastUpdateTime";
+
+        readonly ILogger logger;
         readonly RedisConnection redisConnection = null;
 
-        public RedisWebAppRepository(string connectionString)
+        public RedisRepository(ILogger logger, string connectionString)
         {
+            this.logger = logger;
             this.redisConnection = RedisConnection.InitializeAsync(connectionString).Result;
         }
 

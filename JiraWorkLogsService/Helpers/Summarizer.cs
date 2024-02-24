@@ -10,7 +10,7 @@ namespace JiraWorkLogsService.Helpers;
 
 class Summarizer
 {
-    private readonly IServiceRepository dataStore;
+    readonly IServiceRepository dataStore;
 
     public Summarizer(IServiceRepository dataStore)
     {

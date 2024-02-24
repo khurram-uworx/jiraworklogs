@@ -5,7 +5,7 @@ namespace UWorx.JiraWorkLogs.RabbitMQ;
 
 public class RabbitMQReceiverService : IServiceMessagingService
 {
-    private readonly MessageReceiver messageReceiver;
+    readonly MessageReceiver messageReceiver;
 
     public event EventHandler<ActivityEventArgs> OnMessageReceived;
 
