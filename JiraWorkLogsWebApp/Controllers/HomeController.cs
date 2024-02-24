@@ -28,7 +28,7 @@ namespace JiraWorkLogsWebApp.Controllers
             var remoteIpAddress = this.HttpContext.Connection.RemoteIpAddress?.ToString();
 
             var activityName = $"Home/Index";
-            using var activity = Program.JiraActivitySource.StartActivity(activityName)?
+            using var activity = JiraWorkLogsWebApp.JiraActivitySource.StartActivity(activityName)?
                 .AddBaggage("RemoteIpAddress", remoteIpAddress);
 
             if (this.cache.TryGetValue(CacheKey, out bool isAvailable) && !isAvailable)
@@ -51,9 +51,9 @@ namespace JiraWorkLogsWebApp.Controllers
                 model.LastUpdateTime = await this.dataStore.GetLastUpdateAsync();
 
                 this.logger.LogInformation("Incrementing greeting");
-                Program.CountGreetings.Add(1);
+                JiraWorkLogsWebApp.CountGreetings.Add(1);
 
-                activity?.SetTag("greeting", Program.CountGreetings);
+                activity?.SetTag("greeting", JiraWorkLogsWebApp.CountGreetings);
 
                 return View(model);
             }
@@ -72,10 +72,10 @@ namespace JiraWorkLogsWebApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public ActionResult Rabbit([FromServices] MessageSender messageSender)
+        public ActionResult Sync([FromServices] IWebAppService messageSender)
         {
-            messageSender.SendMessage();
-            this.ViewBag.Message = "RabbitMQ message is sent";
+            messageSender.TriggerJiraSync();
+            this.ViewBag.Message = "Sync is triggered";
             return View();
         }
 

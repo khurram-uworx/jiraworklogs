@@ -1,5 +1,7 @@
+using Dapplo.Log;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -11,7 +13,7 @@ using UWorx.JiraWorkLogs.RabbitMQ;
 
 namespace JiraWorkLogsService
 {
-    public class Program
+    public class JiraWorkLogsService
     {
         internal static ActivitySource JiraActivitySource;
         internal static Counter<int> CountGreetings;
@@ -39,7 +41,12 @@ namespace JiraWorkLogsService
             // for otlp
             //tracing.AddOtlpExporter(otlpOptions => otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint));
 
-            builder.Services.AddSingleton<MessageReceiver>();
+            builder.Services.AddSingleton<MessageReceiver>(f =>
+            {
+                var logger = f.GetRequiredService<ILogger<MessageReceiver>>();
+                return new MessageReceiver(logger,
+                    JiraWorkLogConstants.RabbitMqHost, JiraWorkLogConstants.RabbitMqUser, JiraWorkLogConstants.RabbitMqPassword);
+            });
 
             var host = builder.Build();
             host.Run();

@@ -13,3 +13,8 @@ public interface IServiceRepository
 {
     Task SaveHtmlAsync(int page, string html);
 }
+
+public interface IWebAppService
+{
+    void TriggerJiraSync();
+}

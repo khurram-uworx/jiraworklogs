@@ -13,23 +13,16 @@ static class RabbitMQHelper
     public const string DefaultExchangeName = "";
     public const string TestQueueName = "TestQueue";
 
-    private static readonly ConnectionFactory ConnectionFactory;
-
-    static RabbitMQHelper()
+    public static IConnection CreateConnection(string host, string user, string password)
     {
-        ConnectionFactory = new ConnectionFactory()
+        ConnectionFactory ConnectionFactory = new ConnectionFactory()
         {
-            HostName = JiraWorkLogConstants.RabbitMqHost,
-            UserName = JiraWorkLogConstants.RabbitMqUser,
-            Password = JiraWorkLogConstants.RabbitMqPassword,
-            Port = 5672,
+            HostName = host, Port = 5672,
+            UserName = user, Password = password,
             RequestedConnectionTimeout = TimeSpan.FromMilliseconds(3000),
             ClientProvidedName = Environment.MachineName
         };
-    }
 
-    public static IConnection CreateConnection()
-    {
         return ConnectionFactory.CreateConnection();
     }
 

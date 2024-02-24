@@ -29,10 +29,10 @@ namespace JiraWorkLogsService
             if (logger.IsEnabled(LogLevel.Information))
                 this.logger.LogInformation("Incrementing greeting at: {time}", DateTimeOffset.Now);
 
-            Program.CountGreetings.Add(1);
-            e.MessageActivity?.SetTag("greeting", Program.CountGreetings);
+            JiraWorkLogsService.CountGreetings.Add(1);
+            e.MessageActivity?.SetTag("greeting", JiraWorkLogsService.CountGreetings);
 
-            var jiraUrl = JiraWorkLogConstants.JiraUrl;
+            var jiraUrl = ServiceConstants.JiraUrl;
             if (!string.IsNullOrWhiteSpace(jiraUrl) && jiraUrl != "https://YOUR-COMPANY.atlassian.net")
             {
                 try
@@ -40,7 +40,7 @@ namespace JiraWorkLogsService
                     var jql = ServiceConstants.Jql;
                     if (string.IsNullOrEmpty(jql)) ArgumentException.ThrowIfNullOrEmpty("jql");
                     
-                    var j = new JiraHelper(JiraWorkLogConstants.JiraUrl, JiraWorkLogConstants.JiraUser, JiraWorkLogConstants.JiraToken);
+                    var j = new JiraHelper(ServiceConstants.JiraUrl, ServiceConstants.JiraUser, ServiceConstants.JiraToken);
                     j.ListIssuesAsync(jql).Wait();
                     e.MessageActivity?.AddEvent(new ActivityEvent("Jira Queuried"));
 

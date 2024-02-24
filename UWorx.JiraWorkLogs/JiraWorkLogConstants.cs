@@ -22,6 +22,12 @@ public static class JiraWorkLogConstants
         }
     }
 
+    public static string RabbitMqHost { get => "rabbitmq"; }
+
+    public static string RabbitMqUser { get => "guest"; }
+
+    public static string RabbitMqPassword { get => "guest"; }
+
     public static string RedisConnectionString
     {
         get
@@ -30,16 +36,4 @@ public static class JiraWorkLogConstants
             return $"{redisHostName}:6379,abortConnect=false";
         }
     }
-
-    public static string RabbitMqHost { get => "rabbitmq"; }
-
-    public static string RabbitMqUser { get => "guest"; }
-
-    public static string RabbitMqPassword { get => "guest"; }
-
-    public static string JiraUrl { get => Environment.GetEnvironmentVariable("JIRA_URL") ?? ""; }
-
-    public static string JiraUser { get => Environment.GetEnvironmentVariable("JIRA_USER") ?? ""; }
-
-    public static string JiraToken { get => Environment.GetEnvironmentVariable("JIRA_TOKEN") ?? ""; }
 }

@@ -2,6 +2,7 @@ using JiraWorkLogsWebApp.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -13,7 +14,7 @@ using UWorx.JiraWorkLogs.Redis;
 
 namespace JiraWorkLogsWebApp
 {
-    public class Program
+    public class JiraWorkLogsWebApp
     {
         internal static ActivitySource JiraActivitySource;
         internal static Counter<int> CountGreetings;
@@ -57,10 +58,14 @@ namespace JiraWorkLogsWebApp
             //tracing.AddOtlpExporter(otlpOptions => otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint));
 
             builder.Services.AddSingleton<MemoryCache>();
-            builder.Services.AddTransient<MessageSender>();
-            builder.Services.AddTransient<IWebAppRepository>(p => new RedisWebAppRepository(JiraWorkLogConstants.RedisConnectionString));
+            builder.Services.AddTransient<IWebAppRepository>(p => new RedisWebAppRepository(
+                JiraWorkLogConstants.RedisConnectionString));
+            builder.Services.AddTransient<IWebAppService>(p => new RabbitMQService(
+                p.GetRequiredService<ILogger<RabbitMQService>>(),
+                JiraWorkLogConstants.RabbitMqHost, JiraWorkLogConstants.RabbitMqUser, JiraWorkLogConstants.RabbitMqPassword));
 
             var app = builder.Build();
+
             app.UseOpenTelemetryPrometheusScrapingEndpoint();
 
             // Configure the HTTP request pipeline.

@@ -12,19 +12,19 @@ using System.Text;
 
 namespace UWorx.JiraWorkLogs.RabbitMQ;
 
-public class MessageSender : IDisposable
+class MessageSender : IDisposable
 {
     private static readonly ActivitySource ActivitySource = new(nameof(MessageSender));
     private static readonly TextMapPropagator Propagator = Propagators.DefaultTextMapPropagator;
 
-    private readonly ILogger<MessageSender> logger;
+    private readonly ILogger logger;
     private readonly IConnection connection;
     private readonly IModel channel;
 
-    public MessageSender(ILogger<MessageSender> logger)
+    public MessageSender(ILogger logger, string host, string user, string password)
     {
         this.logger = logger;
-        this.connection = RabbitMQHelper.CreateConnection();
+        this.connection = RabbitMQHelper.CreateConnection(host, user, password);
         this.channel = RabbitMQHelper.CreateModelAndDeclareTestQueue(this.connection);
     }
 
