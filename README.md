@@ -12,6 +12,10 @@ Use khurram as login and uworx as password when nginx prompts for basic authenti
 - http://docker-host/zipkin for zipkin
 - http://docker-host:90 for RabbitMQ
 
+# Python
+- https://learn.microsoft.com/en-us/visualstudio/python/overview-of-python-tools-for-visual-studio
+- https://learn.microsoft.com/en-us/dotnet/aspire/get-started/build-aspire-apps-with-python
+
 # Git
 
 - Setup git if your main user is different

@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /.env
 /emails.txt
+/hello-python/.venv
