@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
 using System;
 
 namespace UWorx.JiraWorkLogs.RabbitMQ;
@@ -9,10 +10,11 @@ public class RabbitMQReceiverService : IServiceMessagingService
 
     public event EventHandler<ActivityEventArgs> OnMessageReceived;
 
-    public RabbitMQReceiverService(ILogger<RabbitMQReceiverService> logger)
+    public RabbitMQReceiverService(ILogger<RabbitMQReceiverService> logger,
+        IConnection connection)
     {
-        this.messageReceiver = new MessageReceiver(logger,
-            RabbitMQConstants.RabbitMqHost, RabbitMQConstants.RabbitMqUser, RabbitMQConstants.RabbitMqPassword);
+        //RabbitMQHelper.CreateConnection(host, user, password);
+        this.messageReceiver = new MessageReceiver(logger, connection);
     }
 
     public void StartConsumer()

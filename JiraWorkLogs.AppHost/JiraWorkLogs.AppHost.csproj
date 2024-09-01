@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAspireHost>true</IsAspireHost>
+    <UserSecretsId>e3701c99-0f5e-4b93-a9de-75d03cdbc03c</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="8.2.0" />
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="8.2.0" />
+  
+    <!-- Add this reference to PythonSample.AppHost.csproj -->
+    <PackageReference Include="Aspire.Hosting.Python" Version="8.2.0" />
+    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="8.2.0" />
+    <PackageReference Include="Aspire.Hosting.Redis" Version="8.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JiraWorkLogsService\JiraWorkLogsService.csproj" />
+    <ProjectReference Include="..\JiraWorkLogsWebApp\JiraWorkLogsWebApp.csproj" />
+  </ItemGroup>
+
+</Project>

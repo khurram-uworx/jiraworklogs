@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using JiraWorkLogsService.Helpers;
 using UWorx.JiraWorkLogs.Redis;
 using UWorx.JiraWorkLogs;
+using JiraWorkLogsService.Data;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace JiraWorkLogsService
 {
@@ -14,13 +16,18 @@ namespace JiraWorkLogsService
     {
         readonly ILogger<Worker> logger;
         readonly IServiceMessagingService messageReceiver;
+        readonly IServiceProvider serviceProvider;
 
         public Worker(ILogger<Worker> logger,
-            IServiceMessagingService messageReceiver)
+            IServiceMessagingService messageReceiver,
+            IServiceProvider serviceProvider)
         {
             this.logger = logger;
+            
             this.messageReceiver = messageReceiver;
             this.messageReceiver.OnMessageReceived += messageReceived;
+
+            this.serviceProvider = serviceProvider;
         }
 
         void messageReceived(object? sender, ActivityEventArgs e)
@@ -38,20 +45,27 @@ namespace JiraWorkLogsService
                 {
                     var jql = ServiceConstants.Jql;
                     if (string.IsNullOrEmpty(jql)) ArgumentException.ThrowIfNullOrEmpty("jql");
-                    
-                    var j = new JiraHelper(ServiceConstants.JiraUrl, ServiceConstants.JiraUser, ServiceConstants.JiraToken);
-                    j.ListIssuesAsync(jql).Wait();
-                    e.MessageActivity?.AddEvent(new ActivityEvent("Jira Queuried"));
 
-                    try
+                    using (var scope = this.serviceProvider.CreateScope())
+                    using (var db = scope.ServiceProvider.GetRequiredService<JiraDbContext>())
                     {
-                        var summarizer = new Summarizer(new RedisRepository(this.logger));
-                        int r = summarizer.ProcessAsync(ServiceConstants.Emails).Result;
-                        e.MessageActivity?.AddEvent(new ActivityEvent("Cache updated"));
-                    }
-                    catch (Exception ex)
-                    {
-                        this.logger.LogError(ex, "Failed to update cache");
+                        db.Database.EnsureCreated();
+
+                        var j = new JiraHelper(ServiceConstants.JiraUrl, ServiceConstants.JiraUser, ServiceConstants.JiraToken);
+                        j.ListIssuesAsync(jql, db).Wait();
+
+                        e.MessageActivity?.AddEvent(new ActivityEvent("Jira Queuried"));
+
+                        try
+                        {
+                            var summarizer = new Summarizer(new RedisRepository(this.serviceProvider.GetRequiredService<ILogger<RedisRepository>>()));
+                            int r = summarizer.ProcessAsync(ServiceConstants.Emails, db).Result;
+                            e.MessageActivity?.AddEvent(new ActivityEvent("Cache updated"));
+                        }
+                        catch (Exception ex)
+                        {
+                            this.logger.LogError(ex, "Failed to update cache");
+                        }
                     }
                 }
                 catch (Exception ex)

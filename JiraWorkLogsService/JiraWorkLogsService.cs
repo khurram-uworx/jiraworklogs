@@ -1,10 +1,11 @@
-using Dapplo.Log;
+using JiraWorkLogsService.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using RabbitMQ.Client;
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
@@ -23,6 +24,12 @@ public class JiraWorkLogsService
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
         var builder = Host.CreateApplicationBuilder(args);
+
+        builder.AddServiceDefaults();
+
+        builder.AddRabbitMQClient("rabbitmq");
+        builder.AddNpgsqlDbContext<JiraDbContext>("worklogs");
+
         builder.Services.AddHostedService<Worker>();
 
         JiraActivitySource = new ActivitySource(builder.Environment.ApplicationName);
@@ -35,16 +42,23 @@ public class JiraWorkLogsService
             .AddMeter(greeterMeter.Name));
         telemetryBuilder.WithTracing(tracing => tracing
             .AddHttpClientInstrumentation()
-            .AddSource(JiraActivitySource.Name)
-            .AddZipkinExporter(b => b.Endpoint = JiraWorkLogConstants.ZipkinEndpoint)
-            .AddConsoleExporter());
+            .AddSource(JiraActivitySource.Name));
+        //.AddZipkinExporter(b => b.Endpoint = JiraWorkLogConstants.ZipkinEndpoint)
+        //.AddConsoleExporter());
         // for otlp
         //tracing.AddOtlpExporter(otlpOptions => otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint));
+
+        // https://learn.microsoft.com/en-us/dotnet/core/diagnostics/observability-otlp-example
+        // Export OpenTelemetry data via OTLP, using env vars for the configuration
+        //var otlpEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+        //if (otlpEndpoint != null)
+        //    telemetryBuilder.UseOtlpExporter();
 
         builder.Services.AddSingleton<IServiceMessagingService>(f =>
         {
             var logger = f.GetRequiredService<ILogger<RabbitMQReceiverService>>();
-            return new RabbitMQReceiverService(logger);
+            var connection = f.GetRequiredService<IConnection>();
+            return new RabbitMQReceiverService(logger, connection);
         });
 
         var host = builder.Build();

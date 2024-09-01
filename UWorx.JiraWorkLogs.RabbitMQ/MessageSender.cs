@@ -21,10 +21,10 @@ class MessageSender : IDisposable
     private readonly IConnection connection;
     private readonly IModel channel;
 
-    public MessageSender(ILogger logger, string host, string user, string password)
+    public MessageSender(ILogger logger, IConnection connection)
     {
         this.logger = logger;
-        this.connection = RabbitMQHelper.CreateConnection(host, user, password);
+        this.connection = connection;
         this.channel = RabbitMQHelper.CreateModelAndDeclareTestQueue(this.connection);
     }
 
