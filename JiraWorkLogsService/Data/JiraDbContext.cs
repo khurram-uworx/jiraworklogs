@@ -25,13 +25,19 @@ class Worklog
 
 class JiraDbContext : DbContext
 {
+    // https://github.com/dotnet/aspire-samples/blob/main/samples/AspireShop/AspireShop.CatalogDb/CatalogDbContext.cs
+    // https://learn.microsoft.com/ef/core/performance/advanced-performance-topics#compiled-queries
+
     public DbSet<TeamMember> TeamMembers { get; set; }
     public DbSet<Worklog> Worklogs { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseNpgsql(JiraWorkLogConstants.DatabaseConnectionString);
-    }
+    public JiraDbContext(DbContextOptions<JiraDbContext> options) : base(options)
+    { }
+
+    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    //{
+    //    optionsBuilder.UseNpgsql(JiraWorkLogConstants.DatabaseConnectionString);
+    //}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

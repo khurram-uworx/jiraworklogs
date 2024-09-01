@@ -25,10 +25,10 @@ class MessageReceiver : IDisposable
 
     public event EventHandler<ActivityEventArgs> OnMessageReceived;
 
-    public MessageReceiver(ILogger logger, string host, string user, string password)
+    public MessageReceiver(ILogger logger, IConnection connection)
     {
         this.logger = logger;
-        this.connection = RabbitMQHelper.CreateConnection(host, user, password);
+        this.connection = connection;
         this.channel = RabbitMQHelper.CreateModelAndDeclareTestQueue(this.connection);
     }
 

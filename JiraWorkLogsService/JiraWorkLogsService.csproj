@@ -9,6 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.2.0" />
+    <PackageReference Include="Aspire.RabbitMQ.Client" Version="8.2.0" />
+    <PackageReference Include="Aspire.StackExchange.Redis" Version="8.2.0" />
     <PackageReference Include="Dapplo.Jira" Version="1.1.47" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
@@ -20,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\JiraWorkLogs.ServiceDefaults\JiraWorkLogs.ServiceDefaults.csproj" />
     <ProjectReference Include="..\UWorx.JiraWorkLogs.RabbitMQ\UWorx.JiraWorkLogs.RabbitMQ.csproj" />
     <ProjectReference Include="..\UWorx.JiraWorkLogs.Redis\UWorx.JiraWorkLogs.Redis.csproj" />
     <ProjectReference Include="..\UWorx.JiraWorkLogs\UWorx.JiraWorkLogs.csproj" />

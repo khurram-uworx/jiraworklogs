@@ -8,13 +8,13 @@ namespace UWorx.JiraWorkLogs.Redis
     {
         const string KeyLastUpdateTime = "LastUpdateTime";
 
-        readonly ILogger logger;
-        readonly RedisConnection redisConnection = null;
+        readonly ILogger<RedisRepository> logger;
+        readonly RedisConnection connection = null;
 
-        public RedisRepository(ILogger logger)
+        public RedisRepository(ILogger<RedisRepository> logger)
         {
             this.logger = logger;
-            this.redisConnection = RedisConnection.InitializeAsync(RedisConstants.RedisConnectionString).Result;
+            this.connection = RedisConnection.InitializeAsync(Environment.GetEnvironmentVariable("ConnectionStrings__redis")).Result;
         }
 
         public async Task InitializeAsync()
@@ -26,28 +26,28 @@ namespace UWorx.JiraWorkLogs.Redis
             //ViewBag.Command2 = $"SET {key}";
             //ViewBag.Command2Result = (await redisConnection.BasicRetryAsync(async (db) => await db.StringSetAsync(key, value))).ToString();
 
-            await redisConnection.BasicRetryAsync(async db => await db.StringSetAsync(KeyLastUpdateTime, value));
+            await connection.BasicRetryAsync(async db => await db.StringSetAsync(KeyLastUpdateTime, value));
 
-            await redisConnection.BasicRetryAsync(async db => await db.StringSetAsync("page1", "<ul><li>Hello<li>World</ul>"));
-            await redisConnection.BasicRetryAsync(async db => await db.StringSetAsync("page2", "<ul><li>Hello<li>Azure</ul>"));
-            await redisConnection.BasicRetryAsync(async db => await db.StringSetAsync("page3", "<ul><li>Hello<li>Redis</ul>"));
+            await connection.BasicRetryAsync(async db => await db.StringSetAsync("page1", "<ul><li>Hello<li>World</ul>"));
+            await connection.BasicRetryAsync(async db => await db.StringSetAsync("page2", "<ul><li>Hello<li>Azure</ul>"));
+            await connection.BasicRetryAsync(async db => await db.StringSetAsync("page3", "<ul><li>Hello<li>Redis</ul>"));
         }
 
         public async Task SaveHtmlAsync(int page, string html)
         {
             var value = DateTime.UtcNow.ToString();
-            await redisConnection.BasicRetryAsync(async db => await db.StringSetAsync($"page{page}", html));
-            await redisConnection.BasicRetryAsync(async db => await db.StringSetAsync(KeyLastUpdateTime, value));
+            await connection.BasicRetryAsync(async db => await db.StringSetAsync($"page{page}", html));
+            await connection.BasicRetryAsync(async db => await db.StringSetAsync(KeyLastUpdateTime, value));
         }
 
         public async Task<string> GetHtmlAsync(int page)
         {
-            return (await redisConnection.BasicRetryAsync(async (db) => await db.StringGetAsync($"page{page}"))).ToString();
+            return (await connection.BasicRetryAsync(async (db) => await db.StringGetAsync($"page{page}"))).ToString();
         }
 
         public async Task<string> GetLastUpdateAsync()
         {
-            return (await redisConnection.BasicRetryAsync(async (db) => await db.StringGetAsync(KeyLastUpdateTime))).ToString();
+            return (await connection.BasicRetryAsync(async (db) => await db.StringGetAsync(KeyLastUpdateTime))).ToString();
         }
     }
 }

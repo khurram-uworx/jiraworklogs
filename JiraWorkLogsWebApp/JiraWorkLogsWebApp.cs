@@ -1,11 +1,10 @@
 using JiraWorkLogsWebApp.Data;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using RabbitMQ.Client;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using UWorx.JiraWorkLogs;
@@ -22,11 +21,14 @@ public class JiraWorkLogsWebApp
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        builder.AddServiceDefaults();
 
+        builder.AddRabbitMQClient("rabbitmq");
         // Add services to the container.
-        var connectionString = JiraWorkLogConstants.DatabaseConnectionString ?? throw new InvalidOperationException("Connection string not found.");
-        builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(connectionString));
+        // var connectionString = JiraWorkLogConstants.DatabaseConnectionString ?? throw new InvalidOperationException("Connection string not found.");
+        //builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        //    options.UseNpgsql(connectionString));
+        builder.AddNpgsqlDbContext<ApplicationDbContext>("worklogs");
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
         builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -49,7 +51,7 @@ public class JiraWorkLogsWebApp
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
             .AddSource(JiraActivitySource.Name)
-            .AddZipkinExporter(b => b.Endpoint = JiraWorkLogConstants.ZipkinEndpoint)
+            //.AddZipkinExporter(b => b.Endpoint = JiraWorkLogConstants.ZipkinEndpoint)
 #if DEBUG
             .AddConsoleExporter()
 #endif
@@ -58,12 +60,21 @@ public class JiraWorkLogsWebApp
         //tracing.AddOtlpExporter(otlpOptions => otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint));
 
         builder.Services.AddSingleton<MemoryCache>();
-        builder.Services.AddTransient<IWebAppRepository>(p => new RedisRepository(
-            p.GetRequiredService<ILogger>()));
-        builder.Services.AddTransient<IWebAppMessagingService>(p => new RabbitMQSenderService(
-            p.GetRequiredService<ILogger<RabbitMQSenderService>>()));
+        builder.Services.AddTransient<IWebAppRepository>(f =>
+        {
+            var logger = f.GetRequiredService<ILogger<RedisRepository>>();
+            return new RedisRepository(logger);
+        });
+        builder.Services.AddTransient<IWebAppMessagingService>(f =>
+        {
+            var logger = f.GetRequiredService<ILogger<RabbitMQSenderService>>();
+            var connection = f.GetRequiredService<IConnection>();
+            return new RabbitMQSenderService(logger, connection);
+        });
 
         var app = builder.Build();
+
+        app.MapDefaultEndpoints();
 
         app.UseOpenTelemetryPrometheusScrapingEndpoint();
 

@@ -13,14 +13,12 @@ public static class JiraWorkLogConstants
         }
     }
 
-    public static string DatabaseConnectionString
-    {
-        get
-        {
-            var postgresHostName = Environment.GetEnvironmentVariable("POSTGRES_HOSTNAME") ?? "postgres";
-            return $"Server={postgresHostName};Database=postgres;UserName=postgres;Password=uworx;";
-        }
-    }
-
-    
+    //public static string DatabaseConnectionString
+    //{
+    //    get
+    //    {
+    //        var postgresHostName = Environment.GetEnvironmentVariable("POSTGRES_HOSTNAME") ?? "postgres";
+    //        return $"Server={postgresHostName};Database=postgres;UserName=postgres;Password=uworx;";
+    //    }
+    //}
 }

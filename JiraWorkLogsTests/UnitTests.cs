@@ -1,31 +1,31 @@
-using FluentAssertions;
-using UWorx.JiraWorkLogs;
+//using FluentAssertions;
+//using UWorx.JiraWorkLogs;
 
-namespace JiraWorkLogsTests;
+//namespace JiraWorkLogsTests;
 
-[TestClass]
-public class UnitTests
-{
-    [TestMethod]
-    public void TestConstants()
-    {
-        // Arrange
+//[TestClass]
+//public class UnitTests
+//{
+//    [TestMethod]
+//    public void TestConstants()
+//    {
+//        // Arrange
 
-        // Act
-        var connectionString = JiraWorkLogConstants.DatabaseConnectionString;
+//        // Act
+//        var connectionString = JiraWorkLogConstants.DatabaseConnectionString;
 
-        // Assert
-        Assert.IsTrue(null != connectionString && connectionString.Length > 0);
+//        // Assert
+//        Assert.IsTrue(null != connectionString && connectionString.Length > 0);
 
-        connectionString.Should().NotBeNullOrEmpty();
-        connectionString.Should().Contain("Server");
-        connectionString.Should().Contain("Database");
-        connectionString.Should().Contain("UserName");
-        connectionString.Should().Contain("Password");
+//        connectionString.Should().NotBeNullOrEmpty();
+//        connectionString.Should().Contain("Server");
+//        connectionString.Should().Contain("Database");
+//        connectionString.Should().Contain("UserName");
+//        connectionString.Should().Contain("Password");
 
-        connectionString.Should()
-            .NotBeNullOrEmpty()
-            .And.ContainAll(["Server", "Database", "UserName", "Password"],
-                "because it should contain all keywords");
-    }
-}
+//        connectionString.Should()
+//            .NotBeNullOrEmpty()
+//            .And.ContainAll(["Server", "Database", "UserName", "Password"],
+//                "because it should contain all keywords");
+//    }
+//}
